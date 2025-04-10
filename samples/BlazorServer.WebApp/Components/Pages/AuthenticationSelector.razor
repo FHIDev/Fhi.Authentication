@@ -1,0 +1,101 @@
+﻿@page "/authentication"
+@rendermode InteractiveServer
+@using System.Security.Claims
+@using BlazorServerWebApp.Services
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject TokenService TokenService
+
+<h3>Velg autentiseringsmetode</h3>
+
+<div class="d-flex align-items-center gap-2">
+    <select class="form-select w-auto" @bind="selectedAuthScheme">
+        @foreach (var scheme in authSchemes)
+        {
+            <option value="@scheme">@scheme</option>
+        }
+    </select>
+
+    <button type="button" @onclick="OnLoginWithScheme" class="btn btn-primary">Login</button>
+    <button type="button" @onclick="OnLogOutWithScheme" class="btn btn-outline-danger">Logout</button>
+</div>
+
+<pre>User authenticated:  @IsloggedIn</pre>
+
+
+<h3>Access Token</h3>
+
+@if (accessToken is not null)
+{
+    <pre>@accessToken</pre>
+}
+
+<h3>Id Token</h3>
+
+@if (idToken is not null)
+{
+    <pre>@idToken</pre>
+}
+
+<h3>Refresh Token</h3>
+@if (refreshToken is not null)
+{
+    <pre>@refreshToken</pre>
+}
+
+<h3>User claims</h3>
+
+
+@if (claims.Any())
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li><b>@claim.Type:</b> @claim.Value</li>
+        }
+    </ul>
+}
+
+
+@code {
+    private string? accessToken;
+    private string? idToken;
+    private string? refreshToken;
+    private bool? IsloggedIn;
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+    private string selectedAuthScheme = "helseid";
+    private List<string> authSchemes = new() { "duende", "helseid" };
+
+    public void OnLoginWithScheme()
+    {
+        var returnUrl = Navigation.Uri;
+        var loginUrl = $"/login?scheme={selectedAuthScheme}&returnUrl={Uri.EscapeDataString(returnUrl)}";
+
+        Navigation.NavigateTo(loginUrl, forceLoad: true);
+    }
+
+    public void OnLogOutWithScheme()
+    {
+        var returnUrl = Navigation.Uri;
+        var loginUrl = $"/logout?scheme={selectedAuthScheme}&returnUrl={Uri.EscapeDataString(returnUrl)}";
+
+        Navigation.NavigateTo(loginUrl, forceLoad: true);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        IsloggedIn = user.Identity?.IsAuthenticated;
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            accessToken = await TokenService.GetAccessTokenAsync();
+            idToken = await TokenService.GetIdTokenAsync();
+            refreshToken = await TokenService.GetRefresAsync();
+            claims = user.Claims;
+        }
+    }
+}

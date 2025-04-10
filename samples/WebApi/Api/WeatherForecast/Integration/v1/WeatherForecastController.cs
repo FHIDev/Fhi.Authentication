@@ -8,12 +8,10 @@ namespace WebApi.Api.WeatherForecast.Integration.v1
     [Route("api/v1/integration/weatherforcasts")]
     public class WeatherForecastController : ControllerBase
     {
-        private readonly ILogger<WeatherForecastController> _logger;
         private readonly IWeatherForcastService _weatherForcastService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IWeatherForcastService weatherForcastService)
+        public WeatherForecastController(IWeatherForcastService weatherForcastService)
         {
-            _logger = logger;
             _weatherForcastService = weatherForcastService;
         }
 
@@ -21,7 +19,7 @@ namespace WebApi.Api.WeatherForecast.Integration.v1
         /// Accepting Bearer authentication scheme
         /// </summary>
         /// <returns></returns>
-        [Authorize]
+        [Authorize("bearer")]
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "Angular og API",
+    "Projects": [
+      {
+        "Path": "samples\\WebApi\\WebApi.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "samples\\AngularBFF\\Angular.BFFApi\\Angular.BFFApi.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "samples\\AngularBFF\\Angular.Client\\Angular.Client.esproj",
+        "Action": "Start",
+        "DebugTarget": "localhost (Chrome)"
+      }
+    ]
+  }
+]

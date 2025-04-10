@@ -1,4 +1,4 @@
-﻿namespace BlazorServerWebApp
+﻿namespace BlazorServerWebApp.Hosting
 {
     public class AuthenticationSettings
     {

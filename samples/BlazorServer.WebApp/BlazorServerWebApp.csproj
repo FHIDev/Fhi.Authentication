@@ -1,19 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
+	<Import Project="..\Sample.Packages.props" />
   <PropertyGroup>
-	  <TargetFrameworks>net9.0</TargetFrameworks>
+	<TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>9ce2a6ef-5832-47e9-8355-7a524d8fd714</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.3" />
+    <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Fhi.Authentication\Fhi.Authentication\Fhi.Authentication.csproj" />
+    <ProjectReference Include="..\..\src\Fhi.Authentication\Fhi.Authentication.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

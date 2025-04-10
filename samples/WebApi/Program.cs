@@ -17,8 +17,8 @@ builder.Services.AddAuthentication(options =>
 })
     .AddJwtBearer("bearer", options =>
     {
-        options.Audience = "fhi:weather";
-        options.Authority = "https://helseid-sts.test.nhn.no";
+        options.Audience = "fhi:webapi";
+        options.Authority = "https://localhost:5001/";
     })
     .AddJwtBearer("dpop", options =>
     {
@@ -35,20 +35,17 @@ builder.Services.AddAuthorization(options =>
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
+    options.AddPolicy("bearer", policy =>
+    {
+        policy.AuthenticationSchemes.Add("bearer");
+        policy.RequireAuthenticatedUser();
+    });
     options.AddPolicy("dpop", policy =>
     {
         policy.AuthenticationSchemes.Add("dpop");
         policy.RequireAuthenticatedUser();
     });
 });
-
-
-//builder.Services.AddAuthorization(o =>
-//{
-//    o.FallbackPolicy = new AuthorizationPolicyBuilder()
-//                .RequireAuthenticatedUser()
-//                .Build();
-//});
 
 
 var app = builder.Build();
