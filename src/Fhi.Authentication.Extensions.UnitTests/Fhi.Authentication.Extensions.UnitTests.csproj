@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Fhi.Authentication.Extensions\Fhi.Authentication.Extensions.csproj" />
     <ProjectReference Include="..\Fhi.Authentication\Fhi.Authentication.Extensions.csproj" />
   </ItemGroup>
 

@@ -22,7 +22,6 @@ export function initializeApp(): () => Promise<void> {
       }
     } catch (error) {
       console.error('Error getting session:', error);
-      //window.location.href = '/error.html';
     }
   };
 }

@@ -1,6 +1,6 @@
 [
   {
-    "Name": "Angular og API",
+    "Name": "Angular and API",
     "Projects": [
       {
         "Path": "samples\\WebApi\\WebApi.csproj",

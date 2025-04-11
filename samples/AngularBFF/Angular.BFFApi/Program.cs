@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(options =>
     /*****************************************************************************************
      * ExpireTimeSpan should be set to a value before refresh token expirers
      * ***************************************************************************************/
-    options.ExpireTimeSpan = TimeSpan.FromSeconds(45);
+    options.ExpireTimeSpan = TimeSpan.FromSeconds(90);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
@@ -41,7 +41,6 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = authenticationSettings.ClientSecret;
     options.CallbackPath = "/signin-oidc";
     options.ResponseType = "code";
-    options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Disable;
 
     /************************************************************************************
      * In a BFF (Backend for Frontend) application with a JavaScript (SPA) frontend, 
@@ -70,11 +69,14 @@ builder.Services.AddAuthentication(options =>
         }
         return Task.CompletedTask;
     };
+    /************************************************************************************
+     * The code below is claims and scope handling that will vary from application to application.
+     *************************************************************************************/
+    options.GetClaimsFromUserInfoEndpoint = true;
     options.Scope.Clear();
     options.Scope.Add("openid");
     options.Scope.Add("offline_access");
     options.Scope.Add("fhi:webapi/weather");
-    options.GetClaimsFromUserInfoEndpoint = true;
     options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -116,7 +118,7 @@ builder.Services.AddTransient<IWeatherForecastService, WeatherForecastService>()
 builder.Services.AddAuthorizationBuilder()
         /************************************************************************************
         The code below will require authentication on all incomming requests unless AllowAnonymous 
-        attribute is set. Note that minimal API endpoints are not automatically protected by the policy.
+        attribute is set. Note that minimal API endpoints are not always automatically protected by the policy.
         *************************************************************************************/
         .SetFallbackPolicy(new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
@@ -146,16 +148,17 @@ app.UseAuthorization();
 /************************************************************************************************
  * The code below is the login call from the frontend returning 302 redirect to the OIDC provider 
  ***********************************************************************************************/
-app.MapGet("/login", async (HttpContext context) =>
+app.MapGet("/login", [AllowAnonymous] async (HttpContext context) =>
 {
-    var returnUrl = context.Request.Query["returnUrl"].ToString();
-    if (string.IsNullOrEmpty(returnUrl))
-    {
-        returnUrl = "/";
-    }
-
     if (context.User is null || context.User.Identity is null || !context.User.Identity.IsAuthenticated)
     {
+        //TODO: proper return url handling
+        var returnUrl = context.Request.Query["ReturnUrl"].ToString();
+        if (string.IsNullOrEmpty(returnUrl))
+        {
+            returnUrl = "/";
+        }
+
         await context.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = returnUrl });
     }
 });
@@ -165,7 +168,7 @@ app.MapGet("/login", async (HttpContext context) =>
  * It is used in the frontend bootstrap to check if the user is authenticated. If not authenticated, it 
  * will redirect to the /login endpoint.
  ***********************************************************************************************/
-app.MapGet("/session", (HttpContext context) =>
+app.MapGet("/session", [AllowAnonymous] (HttpContext context) =>
 {
     if (context.User?.Identity?.IsAuthenticated == true)
     {
