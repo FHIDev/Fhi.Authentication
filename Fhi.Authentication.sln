@@ -28,6 +28,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Angular.BFFApi", "samples\A
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Angular.Client", "samples\AngularBFF\Angular.Client\Angular.Client.esproj", "{94D51406-BAE5-4C38-B805-0559BA269336}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\AuthenticationWithBFF.md = docs\AuthenticationWithBFF.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,5 +82,8 @@ Global
 		{95D7F6A2-3153-4DEA-A5B2-99FB116ECED7} = {E1C34547-3ACD-4E54-BB6A-3E5DCBFFFF02}
 		{B21CD024-F221-452E-B338-B705AD216711} = {95D7F6A2-3153-4DEA-A5B2-99FB116ECED7}
 		{94D51406-BAE5-4C38-B805-0559BA269336} = {95D7F6A2-3153-4DEA-A5B2-99FB116ECED7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {113A468C-B364-454A-BDF5-BE678F61C31A}
 	EndGlobalSection
 EndGlobal

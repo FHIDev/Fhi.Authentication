@@ -2,14 +2,16 @@
 
 import { withInterceptorsFromDi, provideHttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { AppRoutingModule } from './app/app-routing.module';
+import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
-import { APP_INITIALIZER, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, importProvidersFrom, inject } from '@angular/core';
 import { AuthenticationService } from './app/services/authentication.service';
 import { firstValueFrom } from 'rxjs';
 import { AuthInterceptor } from './app/interceptors/auth.interseptor';
+import { provideRouter } from '@angular/router';
 
-export function initializeApp(authService: AuthenticationService): () => Promise<void> {
+export function initializeApp(): () => Promise<void> {
+  const authService = inject(AuthenticationService);
   return async () => {
     try {
       const session = await firstValueFrom(authService.getSession());
@@ -20,7 +22,7 @@ export function initializeApp(authService: AuthenticationService): () => Promise
       }
     } catch (error) {
       console.error('Error getting session:', error);
-      window.location.href = '/error.html';
+      //window.location.href = '/error.html';
     }
   };
 }
@@ -30,7 +32,6 @@ bootstrapApplication(AppComponent, {
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [AuthenticationService],
       multi: true,
     },
 
@@ -39,7 +40,8 @@ bootstrapApplication(AppComponent, {
       useClass: AuthInterceptor,
       multi: true
     },
-    importProvidersFrom(BrowserModule, AppRoutingModule),
+    provideRouter(routes),
+    importProvidersFrom(BrowserModule),
     provideHttpClient(withInterceptorsFromDi())
     ]
 })

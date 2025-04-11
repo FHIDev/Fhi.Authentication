@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { catchError, shareReplay, Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { of } from 'rxjs';
-
-const CACHE_SIZE = 1;
 
 @Injectable({
   providedIn: 'root'
@@ -25,23 +23,7 @@ export class AuthenticationService {
   }
 }
 
-//  //initSession(done: () => void): void {
-  //  //  this.http.get('/api/v1/user-session', { observe: 'response' })
-  //  //    .subscribe({
-  //  //      next: () => {
-  //  //        this.authenticated = true;
-  //  //        done(); 
-  //  //      },
-  //  //      error: err => {
-  //  //        if (err.status === 401) {
-  //  //          //Hard redirect causeing full reload to avoid CORS
-  //  //          window.location.href = '/login';
-  //  //          return;
-  //  //        }
-  //  //        done(); 
-  //  //      }
-  //  //    });
-  //  //}
+
     
 
 type Session = {

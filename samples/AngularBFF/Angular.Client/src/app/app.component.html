@@ -1,3 +1,8 @@
-    <app-nav-menu></app-nav-menu>
-    <app-user-session></app-user-session>
-    <weather-component></weather-component>
+<app-nav-menu></app-nav-menu>
+<nav>
+  <a routerLink="/" routerLinkActive="active-link">Home</a> |
+  <a routerLink="/weather" routerLinkActive="active-link">Weather</a> |
+  <a routerLink="/tokens" routerLinkActive="active-link" >User</a>
+</nav>
+<router-outlet />
+

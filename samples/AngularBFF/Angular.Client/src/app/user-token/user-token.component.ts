@@ -19,7 +19,7 @@ type TokenInformation = {
 
 @Component({
   selector: 'app-user-session',
-  templateUrl: './user-session.component.html',
+  templateUrl: './user-token.component.html',
   standalone: true,
   imports:[NgIf]
 })
@@ -37,7 +37,7 @@ export class UserSessionComponent implements OnInit  {
   }
 
   ngOnInit() {
-    this.http.get<UserSessionDto>('/bff/v1/user-session').pipe(
+    this.http.get<UserSessionDto>('/bff/v1/user-token').pipe(
       map(result => {
         const decodedAccessToken = jwtDecode(result.accessToken);
         const decodedIdToken = jwtDecode(result.idToken);

@@ -17,7 +17,10 @@ export class AuthInterceptor implements HttpInterceptor {
           } else {
             window.location.href = '/error';
           }
-          window.location.href = "/login"
+          const returnUrl = window.location.origin + window.location.pathname + window.location.search;
+          //const returnUrl = window.location.pathname + window.location.search;
+
+          window.location.href = "/login?ReturnUrl=" + returnUrl;
         }
         return throwError(error);
       })

@@ -1,3 +1,4 @@
+using Angular.BFFApi;
 using AngularBFF.Net8.Api.Weather;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
@@ -22,9 +23,11 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 }).AddCookie(options =>
 {
-    options.Cookie.Name = "angular";
+    options.Cookie.Name = "angular-bff";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    //Should be set to a value before refresh token expirers
+    /*****************************************************************************************
+     * ExpireTimeSpan should be set to a value before refresh token expirers
+     * ***************************************************************************************/
     options.ExpireTimeSpan = TimeSpan.FromSeconds(45);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
@@ -40,18 +43,33 @@ builder.Services.AddAuthentication(options =>
     options.ResponseType = "code";
     options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Disable;
 
+    /************************************************************************************
+     * In a BFF (Backend for Frontend) application with a JavaScript (SPA) frontend, 
+     * attempting to initiate an authentication redirect (302) in response to an XHR/fetch 
+     * call will result in a CORS error, as browsers block automatic redirects to 
+     * third-party identity providers in such cases.
+     *
+     * To handle this properly, the frontend listens for 401 Unauthorized responses and 
+     * performs a full-page reload, navigating the browser to the /login endpoint.
+     *
+     * The /login endpoint then initiates a proper OpenID Connect authentication request 
+     * via a 302 redirect to the Identity Provider (IdP), which is allowed by the browser 
+     * because it was triggered by a full-page load (not an XHR).
+     *
+     * The code below ensures that when authentication is required for a non-/login route, 
+     * a 401 is returned instead of a 302, allowing the frontend to detect the need for 
+     * authentication and trigger the correct flow.
+     *************************************************************************************/
     options.Events.OnRedirectToIdentityProvider = context =>
     {
         if (!context.Request.Path.StartsWithSegments("/login"))
         {
-            context.Response.Headers["Location"] = context.ProtocolMessage.CreateAuthenticationRequestUrl();
+            context.Response.Headers.Location = context.ProtocolMessage.CreateAuthenticationRequestUrl();
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             context.HandleResponse();
         }
-
         return Task.CompletedTask;
     };
-
     options.Scope.Clear();
     options.Scope.Add("openid");
     options.Scope.Add("offline_access");
@@ -64,15 +82,25 @@ builder.Services.AddAuthentication(options =>
     };
     options.SaveTokens = true;
 });
+builder.Services.AddTransient<CookieEvents>();
 
+
+/**************************************************************************************
+ * Registers support for managing access tokens used when calling downstream APIs 
+ * on behalf of the authenticated user. This setup handles among other things storage, automatic renewal, 
+ * and revocation of OpenID Connect tokens.
+ **************************************************************************************/
 builder.Services.AddOpenIdConnectAccessTokenManagement(options =>
 {
     options.RefreshBeforeExpiration = TimeSpan.FromSeconds(10);
     options.ChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 });
-builder.Services.AddTransient<CookieEvents>();
 
-builder.Services.AddTransient<RefreshTokenFailureHandler>();
+/**************************************************************************************
+ * Registers a named HTTP client ("WebApi") that automatically includes the user's 
+ * access token in outgoing requests to the downstream API. If the access token has 
+ * expired, it will use the refresh token to obtain a new one before retrying the request.
+ **************************************************************************************/
 builder.Services.AddUserAccessTokenHttpClient(
     "WebApi",
     parameters: new UserTokenRequestParameters()
@@ -82,22 +110,22 @@ builder.Services.AddUserAccessTokenHttpClient(
     configureClient: (provider, client) =>
     {
         client.BaseAddress = new Uri("https://localhost:7150");
-    }).AddHttpMessageHandler<RefreshTokenFailureHandler>();
-
+    });
 builder.Services.AddTransient<IWeatherForecastService, WeatherForecastService>();
+
+builder.Services.AddAuthorizationBuilder()
+        /************************************************************************************
+        The code below will require authentication on all incomming requests unless AllowAnonymous 
+        attribute is set. Note that minimal API endpoints are not automatically protected by the policy.
+        *************************************************************************************/
+        .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+                .Build());
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-/**Require authentication on all requests***/
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-});
-
 
 var app = builder.Build();
 
@@ -115,34 +143,46 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/login", [AllowAnonymous] async (HttpContext context) =>
+/************************************************************************************************
+ * The code below is the login call from the frontend returning 302 redirect to the OIDC provider 
+ ***********************************************************************************************/
+app.MapGet("/login", async (HttpContext context) =>
 {
-    if (context.User is null || context.User.Identity is null || !context.User.Identity.IsAuthenticated)
+    var returnUrl = context.Request.Query["returnUrl"].ToString();
+    if (string.IsNullOrEmpty(returnUrl))
     {
-        await context.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/" });
+        returnUrl = "/";
     }
 
-    //var returnUrl = context.Request.Query["returnUrl"].ToString();
-    //if (string.IsNullOrEmpty(returnUrl))
-    //{
-    //    returnUrl = "/";
-    //}
-
+    if (context.User is null || context.User.Identity is null || !context.User.Identity.IsAuthenticated)
+    {
+        await context.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = returnUrl });
+    }
 });
 
+/************************************************************************************************
+ * The code below is the session call from the frontend returning 200 OK with isAuthenticated = true/false.
+ * It is used in the frontend bootstrap to check if the user is authenticated. If not authenticated, it 
+ * will redirect to the /login endpoint.
+ ***********************************************************************************************/
 app.MapGet("/session", (HttpContext context) =>
 {
     if (context.User?.Identity?.IsAuthenticated == true)
     {
-        return Results.Ok(new { isAuthenticated = true, isError = false });
+        return Results.Ok(new { isAuthenticated = true });
     }
-
-    return Results.Ok(new { isAuthenticated = false, isError = false });
+    return Results.Ok(new { isAuthenticated = false });
 });
 
-
+/************************************************************************************************
+ * The code below is the logout call from the frontend. Must be logging out from both the cookie and 
+ * OpenIdConnect authentication schemes. If other authentication schemes are used, it should logout 
+ * from those as well. RevokeRefreshTokenAsync can alio be handled in the CookieEvents class.
+ ***********************************************************************************************/
 app.MapGet("/logout", async (HttpContext context) =>
 {
+    await context.RevokeRefreshTokenAsync();
+
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
 });

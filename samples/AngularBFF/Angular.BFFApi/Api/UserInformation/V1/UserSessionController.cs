@@ -7,11 +7,11 @@ namespace AngularBFF.Net8.Api.UserInformation.V1
     record UserInformation();
 
     [ApiController]
-    [Route("/bff/v1/user-session")]
+    [Route("/bff/v1/user-token")]
     public class UserSessionController : ControllerBase
     {
         [HttpGet(Name = "GetUserSession")]
-        public async Task<IActionResult> GetUserSession()
+        public async Task<IActionResult> GetUserTokens()
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");
