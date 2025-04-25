@@ -6,7 +6,8 @@ namespace Fhi.Authentication.OpenIdConnect
 {
     public static class OpenIdConnectEventsExtensions
     {
-        public static async Task AuthorizationCodeReceivedWithClientAssertion(this AuthorizationCodeReceivedContext context)
+
+        public static async Task AuthorizationCodeReceivedWithClientAssertionAsync(this AuthorizationCodeReceivedContext context)
         {
             if (context.Options.ConfigurationManager is not null)
             {
@@ -25,7 +26,7 @@ namespace Fhi.Authentication.OpenIdConnect
             if (context.Options.ConfigurationManager is not null)
             {
                 var discovery = await context.Options.ConfigurationManager.GetConfigurationAsync(default);
-                 var clientAssertionTokenHandler = context.HttpContext.RequestServices.GetRequiredService<IClientAssertionTokenHandler>();
+                var clientAssertionTokenHandler = context.HttpContext.RequestServices.GetRequiredService<IClientAssertionTokenHandler>();
 
                 context.ProtocolMessage.ClientAssertionType = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
                 context.ProtocolMessage.ClientAssertion = clientAssertionTokenHandler.CreateJwtToken(discovery.Issuer, context.Options.ClientId!, context.Options.ClientSecret!);

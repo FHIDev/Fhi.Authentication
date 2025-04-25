@@ -1,0 +1,1 @@
+﻿# Blazor interactive server application

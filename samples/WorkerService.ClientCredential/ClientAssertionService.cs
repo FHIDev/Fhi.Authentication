@@ -9,7 +9,7 @@ namespace WorkerService.ClientCredential
     internal class ClientAssertionService : IClientAssertionService
     {
         private readonly IOptionsMonitor<ClientCredentialsClient> _options;
-        private readonly IOptions<ClientConfiguration> _clientConfiguration;
+        private readonly ClientConfiguration _clientConfiguration;
         private readonly IClientAssertionTokenHandler _clientAssertionTokenService;
 
         public ClientAssertionService(
@@ -18,21 +18,23 @@ namespace WorkerService.ClientCredential
             IClientAssertionTokenHandler clientAssertionTokenService)
         {
             _options = options;
-            _clientConfiguration = clientConfigurations;
+            _clientConfiguration = clientConfigurations.Value;
             _clientAssertionTokenService = clientAssertionTokenService;
         }
-        public Task<ClientAssertion?> GetClientAssertionAsync(string? clientName = null, TokenRequestParameters? parameters = null)
+        public async Task<ClientAssertion?> GetClientAssertionAsync(string? clientName = null, TokenRequestParameters? parameters = null)
         {
+            var client = new HttpClient();
             //var options = _options.Get(clientName);
-            var jwt = _clientAssertionTokenService.CreateJwtToken("https://helseid-sts.test.nhn.no",
-                _clientConfiguration.Value.ClientId,
-                _clientConfiguration.Value.PrivateJwk);
 
-            return Task.FromResult<ClientAssertion?>(new ClientAssertion
+            //Get issuer and token endpoint from discovery document
+            var discovery = await client.GetDiscoveryDocumentAsync(_clientConfiguration.Authority);
+            var jwt = _clientAssertionTokenService.CreateJwtToken(discovery.Issuer!, _clientConfiguration.ClientId, _clientConfiguration.PrivateJwk);
+
+            return new ClientAssertion
             {
                 Type = OidcConstants.ClientAssertionTypes.JwtBearer,
                 Value = jwt
-            });
+            };
         }
     }
 }

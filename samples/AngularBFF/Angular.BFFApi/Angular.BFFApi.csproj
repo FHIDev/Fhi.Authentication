@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <ProjectReference Include="..\..\..\src\Fhi.Authentication.Extensions\Fhi.Authentication.Extensions.csproj" />
 	  <ProjectReference Include="..\Angular.Client\Angular.Client.esproj">
 		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 	  </ProjectReference>

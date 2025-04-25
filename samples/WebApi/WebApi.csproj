@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\WeatherForecast\Me\" />
+    <ProjectReference Include="..\..\src\Fhi.Authorization.Extensions\Fhi.Authorization.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

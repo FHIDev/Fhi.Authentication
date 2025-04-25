@@ -1,0 +1,5 @@
+site_name: FHI HelseID Tools
+theme:
+  name: material
+  palette:
+    primary: white

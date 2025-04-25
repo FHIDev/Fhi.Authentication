@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Server
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+       @*  <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+       *@
+         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+
+</Router>      
+
+@* <ReconnectHandler>
+    <NotConnected>
+        <div class="alert alert-warning">
+            You've been disconnected. <a href="/">Log in again</a> to continue.
+        </div>
+    </NotConnected>
+    <Reconnecting>
+        <div class="alert alert-info">
+            Attempting to reconnect...
+        </div>
+    </Reconnecting>
+    <Connected>
+            <!-- Optional: show something when reconnected -->
+        </Connected>
+</ReconnectHandler> *@
+
+ 
+

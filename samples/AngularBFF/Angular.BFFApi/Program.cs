@@ -1,6 +1,7 @@
-using Angular.BFFApi;
-using AngularBFF.Net8.Api.Weather;
+using AngularBFF.Net8.Api.HealthRecords;
 using Duende.AccessTokenManagement.OpenIdConnect;
+using Fhi.Authentication.OpenIdConnect;
+using Fhi.Authentication.Tokens;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -32,7 +33,7 @@ builder.Services.AddAuthentication(options =>
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.EventsType = typeof(CookieEvents);
+    options.EventsType = typeof(DefaultCookieEvent);
 })
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
@@ -69,14 +70,23 @@ builder.Services.AddAuthentication(options =>
         }
         return Task.CompletedTask;
     };
-    /************************************************************************************
+
+    /*********************************************************************************************
+     * The events OnAuthorizationCodeReceived and OnPushAuthorization below is used to handle 
+     * the authorization code flow with client assertion. This is required when using the client assertion
+     * flow for authorization code exchange.
+     *********************************************************************************************/
+    options.Events.OnAuthorizationCodeReceived = context => context.AuthorizationCodeReceivedWithClientAssertionAsync();
+    options.Events.OnPushAuthorization = context => context.PushAuthorizationWithClientAssertion();
+
+    /*********************************************************************************************
      * The code below is claims and scope handling that will vary from application to application.
-     *************************************************************************************/
+     *********************************************************************************************/
     options.GetClaimsFromUserInfoEndpoint = true;
     options.Scope.Clear();
     options.Scope.Add("openid");
     options.Scope.Add("offline_access");
-    options.Scope.Add("fhi:webapi/weather");
+    options.Scope.Add("fhi:webapi/access");
     options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -84,7 +94,9 @@ builder.Services.AddAuthentication(options =>
     };
     options.SaveTokens = true;
 });
-builder.Services.AddTransient<CookieEvents>();
+builder.Services.AddTransient<DefaultCookieEvent>();
+builder.Services.AddTransient<ITokenService, DefaultTokenService>();
+builder.Services.AddTransient<IClientAssertionTokenHandler, DefaultClientAssertionTokenHandler>();
 
 
 /**************************************************************************************
@@ -113,13 +125,14 @@ builder.Services.AddUserAccessTokenHttpClient(
     {
         client.BaseAddress = new Uri("https://localhost:7150");
     });
-builder.Services.AddTransient<IWeatherForecastService, WeatherForecastService>();
+builder.Services.AddTransient<IHealthRecordService, HealthRecordService>();
 
+/************************************************************************************
+The code below will require authentication on all incomming requests unless AllowAnonymous 
+attribute is set. Note that minimal API endpoints are not always automatically protected by the policy.
+*************************************************************************************/
 builder.Services.AddAuthorizationBuilder()
-        /************************************************************************************
-        The code below will require authentication on all incomming requests unless AllowAnonymous 
-        attribute is set. Note that minimal API endpoints are not always automatically protected by the policy.
-        *************************************************************************************/
+
         .SetFallbackPolicy(new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
                 .Build());
@@ -150,17 +163,15 @@ app.UseAuthorization();
  ***********************************************************************************************/
 app.MapGet("/login", [AllowAnonymous] async (HttpContext context) =>
 {
-    if (context.User is null || context.User.Identity is null || !context.User.Identity.IsAuthenticated)
-    {
-        //TODO: proper return url handling
-        var returnUrl = context.Request.Query["ReturnUrl"].ToString();
-        if (string.IsNullOrEmpty(returnUrl))
-        {
-            returnUrl = "/";
-        }
 
-        await context.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = returnUrl });
+    //TODO: proper return url handling
+    var returnUrl = context.Request.Query["ReturnUrl"].ToString();
+    if (string.IsNullOrEmpty(returnUrl))
+    {
+        returnUrl = "/";
     }
+
+    await context.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = returnUrl });
 });
 
 /************************************************************************************************

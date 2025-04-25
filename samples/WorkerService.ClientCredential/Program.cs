@@ -1,9 +1,11 @@
 using Duende.AccessTokenManagement;
 using Fhi.Authentication.Tokens;
 using WorkerService.ClientCredential;
+using WorkerService.Workers;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+//builder.Services.AddHostedService<ClientCredentialDPoPTokenWorker>();
+builder.Services.AddHostedService<ClientCredentialBearerTokenWorker>();
 
 builder.Services.AddTransient<IClientAssertionService, ClientAssertionService>();
 builder.Services.AddTransient<IClientAssertionTokenHandler, DefaultClientAssertionTokenHandler>();
@@ -35,12 +37,12 @@ builder.Services
 
 // Register HTTP client
 builder.Services.AddTransient<LoggingHandler>();
-builder.Services.AddClientCredentialsHttpClient("weatherapi", clientConfiguration.ClientName, client =>
+builder.Services.AddClientCredentialsHttpClient("health-records", clientConfiguration.ClientName, client =>
 {
     client.BaseAddress = new Uri("https://localhost:7150");
 }).AddHttpMessageHandler<LoggingHandler>();
 
-builder.Services.AddClientCredentialsHttpClient("weatherapi.dpop", clientConfiguration.ClientName + ".dpop", client =>
+builder.Services.AddClientCredentialsHttpClient("health-records.dpop", clientConfiguration.ClientName + ".dpop", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7150");
 }).AddHttpMessageHandler<LoggingHandler>();
