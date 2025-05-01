@@ -6,6 +6,7 @@ using Duende.AccessTokenManagement;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Duende.IdentityModel.Client;
 using Fhi.Authentication;
+using Fhi.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -78,11 +79,6 @@ internal static partial class Startup
         builder.Services.AddOpenIdConnectAccessTokenManagement()
         .AddBlazorServerAccessTokenManagement<InMemoryUserTokenStore>();
 
-        //TODO: Should create a Blozor project and nuget package
-        builder.Services.AddScoped<AuthenticationStateProvider, CustomRevalidatingAuthenticationStateProvider>();
-        builder.Services.AddScoped<NavigationService>();
-        builder.Services.AddCascadingAuthenticationState();
-
         builder.Services.AddScoped<HealthRecordService>();
         builder.Services.AddUserAccessTokenHttpClient(
             "WebApi",
@@ -105,8 +101,12 @@ internal static partial class Startup
                 client.BaseAddress = new Uri("https://localhost:7150");
             });
 
-        builder.Services.AddHttpContextAccessor();
+        //TODO: Should create a Blazor project and nuget package
+        builder.Services.AddScoped<AuthenticationStateProvider, CustomRevalidatingAuthenticationStateProvider>();
+        builder.Services.AddCascadingAuthenticationState();
+        builder.Services.AddScoped<NavigationService>();
 
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents()
             .AddHubOptions(options =>

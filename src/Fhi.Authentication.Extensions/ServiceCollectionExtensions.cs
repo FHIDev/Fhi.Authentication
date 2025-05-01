@@ -1,5 +1,4 @@
-﻿using BlazorInteractiveServer.Hosting.Authentication;
-using Fhi.Authentication.OpenIdConnect;
+﻿using Fhi.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

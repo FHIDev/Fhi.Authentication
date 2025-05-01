@@ -1,9 +1,8 @@
-using Fhi.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace BlazorInteractiveServer.Hosting.Authentication
+namespace Fhi.Authentication.OpenIdConnect
 {
     public class OpenIdConnectCookieAuthenticationOptions : IPostConfigureOptions<CookieAuthenticationOptions>
     {

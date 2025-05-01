@@ -1,12 +1,11 @@
 using AngularBFF.Net8.Api.HealthRecords;
-using Duende.AccessTokenManagement.OpenIdConnect;
 using Fhi.Authentication;
 using Fhi.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,17 +23,12 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 }).AddCookie(options =>
 {
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     /*****************************************************************************************
      * ExpireTimeSpan should be set to a value before refresh token expirers. This is to ensure 
      * that the cookie is not expired when the refresh token is expired used to get a new 
      * access token in downstream API calls. 
      * ***************************************************************************************/
     options.ExpireTimeSpan = TimeSpan.FromSeconds(90);
-    options.SlidingExpiration = true;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-    options.EventsType = typeof(OpenIdConnectCookieEventsForApi);
 })
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
@@ -83,24 +77,18 @@ builder.Services.AddAuthentication(options =>
     /*********************************************************************************************
      * The code below is claims and scope handling that will vary from application to application.
      *********************************************************************************************/
-    options.GetClaimsFromUserInfoEndpoint = true;
     options.Scope.Clear();
     options.Scope.Add("openid");
     options.Scope.Add("offline_access");
     options.Scope.Add("fhi:webapi/access");
-    options.MapInboundClaims = false;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = "sub",
-    };
-    options.SaveTokens = true;
 });
 builder.Services.AddOpenIdConnectCookieEventServices();
+builder.Services.AddSingleton<IPostConfigureOptions<OpenIdConnectOptions>, DefaultOpenIdConnectOptions>();
 
 /**************************************************************************************
  * Registers support for managing access tokens used when calling downstream APIs 
  * on behalf of the authenticated user. This setup handles among other things storage, automatic renewal, 
- * and revocation of OpenID Connect tokens.
+ * and revocation of OpenID Connect tokens. Options set below is samples and is most likely not needed. It depends on the use cases.
  **************************************************************************************/
 builder.Services.AddOpenIdConnectAccessTokenManagement(options =>
 {
@@ -115,10 +103,6 @@ builder.Services.AddOpenIdConnectAccessTokenManagement(options =>
  **************************************************************************************/
 builder.Services.AddUserAccessTokenHttpClient(
     "WebApi",
-    parameters: new UserTokenRequestParameters()
-    {
-        ChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme,
-    },
     configureClient: (provider, client) =>
     {
         client.BaseAddress = new Uri("https://localhost:7150");

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BlazorInteractiveServer.Hosting.Authentication
+namespace Fhi.Authentication.OpenIdConnect
 {
     public class DefaultOpenIdConnectOptions : IPostConfigureOptions<OpenIdConnectOptions>
     {

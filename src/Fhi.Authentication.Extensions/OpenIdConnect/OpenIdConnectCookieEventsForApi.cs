@@ -8,14 +8,9 @@ namespace Fhi.Authentication.OpenIdConnect
     /// Default implementation of <see cref="CookieAuthenticationEvents"/> for web clients using OpenId Connect with downstream API calls
     /// with refresh token.
     /// </summary>
-    public class OpenIdConnectCookieEventsForApi : BasicCookieAuthenticationEvents
+    public class OpenIdConnectCookieEventsForApi(ILogger<OpenIdConnectCookieEventsForApi> logger) : BasicCookieAuthenticationEvents
     {
-        private readonly ILogger<OpenIdConnectCookieEventsForApi> _logger;
-
-        public OpenIdConnectCookieEventsForApi(ILogger<OpenIdConnectCookieEventsForApi> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger<OpenIdConnectCookieEventsForApi> _logger = logger;
 
         /// <summary>
         /// Validate the principal and check if the access token or refresh token is expired.

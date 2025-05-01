@@ -20,7 +20,7 @@ namespace Fhi.Authentication.OpenIdConnect
             var userToken = await UserTokenEndpointService.RefreshAccessTokenAsync(new UserToken() { RefreshToken = refreshToken }, new UserTokenRequestParameters());
             if (userToken.IsError)
             {
-                Logger.LogError(userToken.Error);
+                Logger.LogError(message: userToken.Error);
                 return new TokenResponse(true);
             }
 
