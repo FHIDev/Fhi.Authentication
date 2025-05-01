@@ -1,17 +1,12 @@
 ﻿using Duende.AccessTokenManagement.OpenIdConnect;
+using Fhi.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Options;
 
 namespace BlazorInteractiveServer.Hosting.Authentication
 {
-    public class BlazorOpenIdConnectEvents : OpenIdConnectEvents
+    public class BlazorOpenIdConnectEvents(IUserTokenStore UserTokenStore, IOptions<AuthenticationSettings> Options) : OpenIdConnectEvents
     {
-        private readonly IUserTokenStore _userTokenStore;
-
-        public BlazorOpenIdConnectEvents(IUserTokenStore userTokenStore)
-        {
-            _userTokenStore = userTokenStore;
-        }
-
         public override Task RedirectToIdentityProvider(RedirectContext context)
         {
             //if (context.Request.Path.StartsWithSegments("/_blazor"))
@@ -23,22 +18,20 @@ namespace BlazorInteractiveServer.Hosting.Authentication
             return base.RedirectToIdentityProvider(context);
         }
 
-        public override Task PushAuthorization(PushedAuthorizationContext context)
+        public override async Task PushAuthorization(PushedAuthorizationContext context)
         {
-            //await context.PushAuthorizationWithClientAssertion();
-            return base.PushAuthorization(context);
+            await context.PushAuthorizationWithClientAssertion(Options.Value.ClientId, Options.Value.ClientSecret);
         }
 
-        public override Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
+        public override async Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
         {
-            //await context.AuthorizationCodeReceivedWithClientAssertionAsync();
-            return base.AuthorizationCodeReceived(context);
+            await context.AuthorizationCodeReceivedWithClientAssertionAsync(Options.Value.ClientId, Options.Value.ClientSecret);
         }
 
         public override async Task<Task> TokenValidated(TokenValidatedContext context)
         {
             var exp = DateTimeOffset.UtcNow.AddSeconds(double.Parse(context.TokenEndpointResponse!.ExpiresIn));
-            await _userTokenStore.StoreTokenAsync(context.Principal!, new UserToken
+            await UserTokenStore.StoreTokenAsync(context.Principal!, new UserToken
             {
                 AccessToken = context.TokenEndpointResponse.AccessToken,
                 AccessTokenType = context.TokenEndpointResponse.TokenType,

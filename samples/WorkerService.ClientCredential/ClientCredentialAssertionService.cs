@@ -6,20 +6,17 @@ using Microsoft.Extensions.Options;
 
 namespace WorkerService.ClientCredential
 {
-    internal class ClientAssertionService : IClientAssertionService
+    internal class ClientCredentialAssertionService : IClientAssertionService
     {
         private readonly IOptionsMonitor<ClientCredentialsClient> _options;
         private readonly ClientConfiguration _clientConfiguration;
-        private readonly IClientAssertionTokenHandler _clientAssertionTokenService;
 
-        public ClientAssertionService(
+        public ClientCredentialAssertionService(
             IOptionsMonitor<ClientCredentialsClient> options,
-            IOptions<ClientConfiguration> clientConfigurations,
-            IClientAssertionTokenHandler clientAssertionTokenService)
+            IOptions<ClientConfiguration> clientConfigurations)
         {
             _options = options;
             _clientConfiguration = clientConfigurations.Value;
-            _clientAssertionTokenService = clientAssertionTokenService;
         }
         public async Task<ClientAssertion?> GetClientAssertionAsync(string? clientName = null, TokenRequestParameters? parameters = null)
         {
@@ -28,7 +25,7 @@ namespace WorkerService.ClientCredential
 
             //Get issuer and token endpoint from discovery document
             var discovery = await client.GetDiscoveryDocumentAsync(_clientConfiguration.Authority);
-            var jwt = _clientAssertionTokenService.CreateJwtToken(discovery.Issuer!, _clientConfiguration.ClientId, _clientConfiguration.PrivateJwk);
+            var jwt = ClientAssertionTokenHandler.CreateJwtToken(discovery.Issuer!, _clientConfiguration.ClientId, _clientConfiguration.Secret);
 
             return new ClientAssertion
             {

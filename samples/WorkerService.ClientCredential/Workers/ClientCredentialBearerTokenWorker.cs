@@ -1,4 +1,5 @@
-﻿using Duende.IdentityModel;
+﻿using Duende.AccessTokenManagement;
+using Duende.IdentityModel;
 using Duende.IdentityModel.Client;
 using Fhi.Authentication.Tokens;
 using Microsoft.Extensions.Options;
@@ -13,19 +14,18 @@ namespace WorkerService.Workers
     {
         private readonly ILogger<ClientCredentialBearerTokenWorker> _logger;
         private readonly IHttpClientFactory _factory;
-        private readonly IClientAssertionTokenHandler _clientAssertionTokenHandler;
+        private readonly IClientCredentialsTokenManagementService _clientCredentialsTokenManagement;
         private readonly ClientConfiguration _clientConfigurations;
 
         public ClientCredentialBearerTokenWorker(
             ILogger<ClientCredentialBearerTokenWorker> logger,
             IHttpClientFactory factory,
-            IClientAssertionTokenHandler clientAssertionTokenHandler,
-            IOptions<ClientConfiguration> clientConfigurations
-            )
+            IOptions<ClientConfiguration> clientConfigurations,
+            IClientCredentialsTokenManagementService clientCredentialsTokenManagement)
         {
             _logger = logger;
             _factory = factory;
-            _clientAssertionTokenHandler = clientAssertionTokenHandler;
+            _clientCredentialsTokenManagement = clientCredentialsTokenManagement;
             _clientConfigurations = clientConfigurations.Value;
         }
 
@@ -39,17 +39,17 @@ namespace WorkerService.Workers
             var discovery = await client.GetDiscoveryDocumentAsync(_clientConfigurations.Authority);
             if (discovery is not null && !discovery.IsError && discovery.Issuer is not null && discovery.TokenEndpoint is not null)
             {
-                //Get token using client credentials flow
                 var tokenRequest = new ClientCredentialsTokenRequest()
                 {
                     ClientId = _clientConfigurations.ClientId,
                     Address = discovery.TokenEndpoint,
                     GrantType = OidcConstants.GrantTypes.ClientCredentials,
                     ClientCredentialStyle = ClientCredentialStyle.PostBody,
+                    //ClientSecret = _clientConfigurations.Secret, // This is used for shared secrets, not needed when using client assertion
                     ClientAssertion = new ClientAssertion()
                     {
                         Type = OidcConstants.ClientAssertionTypes.JwtBearer,
-                        Value = _clientAssertionTokenHandler.CreateJwtToken(discovery.Issuer, _clientConfigurations.ClientId, _clientConfigurations.PrivateJwk)
+                        Value = ClientAssertionTokenHandler.CreateJwtToken(discovery.Issuer, _clientConfigurations.ClientId, _clientConfigurations.Secret)
                     },
                     Scope = _clientConfigurations.Scope
                 };
@@ -59,20 +59,40 @@ namespace WorkerService.Workers
                 //API request with bearer token
                 var apiRequest = new HttpRequestMessage(HttpMethod.Get, new Uri(new Uri("https://localhost:7150"), "api/v1/integration/health-records"));
                 apiRequest.SetBearerToken(tokenResponse.AccessToken!);
-                var weatherApiResponse = await client.SendAsync(apiRequest);
-                _logger.LogInformation("Bearer weather response: " + await weatherApiResponse.Content.ReadAsStringAsync());
+                var healthRecordApiResponse = await client.SendAsync(apiRequest);
+                _logger.LogInformation("Bearer api response: " + await healthRecordApiResponse.Content.ReadAsStringAsync());
             }
+
+            /************************************************************************************************
+             * Manually getting token using duende service from AccessTokenManagement package.
+             * This method is used by the HttpClient extensions from Duende. 
+            /************************************************************************************************/
+            var duendeTokenResponse = await _clientCredentialsTokenManagement.GetAccessTokenAsync(
+                _clientConfigurations.ClientName,
+                new TokenRequestParameters()
+                {
+                    Assertion = new ClientAssertion()
+                    {
+                        Type = OidcConstants.ClientAssertionTypes.JwtBearer,
+                        Value = ClientAssertionTokenHandler.CreateJwtToken(discovery!.Issuer!, _clientConfigurations.ClientId, _clientConfigurations.Secret)
+                    },
+                    Scope = _clientConfigurations.Scope
+                });
+            _logger.LogInformation("Duende manuel response: " + duendeTokenResponse.AccessToken);
 
             /************************************************************************************************
             * Using registered HttpClient with Duende Http Delegation handler to create bearer token. 
             * See service configuration
             * **********************************************************************************************/
-            var weatherApiClient = _factory.CreateClient("health-records");
-            var response = await weatherApiClient.GetAsync("api/v1/integration/health-records");
-            _logger.LogInformation("Dpop weather response: " + await response.Content.ReadAsStringAsync());
+            var healthApiClient = _factory.CreateClient(_clientConfigurations.ClientName);
+            var response = await healthApiClient.GetAsync("api/v1/integration/health-records");
+            _logger.LogInformation("Using HttpClient Response: " + await response.Content.ReadAsStringAsync());
 
             //Should not have access to end-user endpoint
-            var meResponse = await weatherApiClient.GetAsync("api/v1/me/health-records");
+            var meResponse = await healthApiClient.GetAsync("api/v1/me/health-records");
+            if (meResponse.IsSuccessStatusCode)
+                throw new Exception("User should not have access");
+            _logger.LogInformation("Access denied response: " + meResponse.StatusCode);
 
             await RunService(stoppingToken);
         }

@@ -1,7 +1,7 @@
 using AngularBFF.Net8.Api.HealthRecords;
 using Duende.AccessTokenManagement.OpenIdConnect;
+using Fhi.Authentication;
 using Fhi.Authentication.OpenIdConnect;
-using Fhi.Authentication.Tokens;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -24,16 +24,17 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 }).AddCookie(options =>
 {
-    options.Cookie.Name = "angular-bff";
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     /*****************************************************************************************
-     * ExpireTimeSpan should be set to a value before refresh token expirers
+     * ExpireTimeSpan should be set to a value before refresh token expirers. This is to ensure 
+     * that the cookie is not expired when the refresh token is expired used to get a new 
+     * access token in downstream API calls. 
      * ***************************************************************************************/
     options.ExpireTimeSpan = TimeSpan.FromSeconds(90);
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.EventsType = typeof(DefaultCookieEvent);
+    options.EventsType = typeof(OpenIdConnectCookieEventsForApi);
 })
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
@@ -94,10 +95,7 @@ builder.Services.AddAuthentication(options =>
     };
     options.SaveTokens = true;
 });
-builder.Services.AddTransient<DefaultCookieEvent>();
-builder.Services.AddTransient<ITokenService, DefaultTokenService>();
-builder.Services.AddTransient<IClientAssertionTokenHandler, DefaultClientAssertionTokenHandler>();
-
+builder.Services.AddOpenIdConnectCookieEventServices();
 
 /**************************************************************************************
  * Registers support for managing access tokens used when calling downstream APIs 

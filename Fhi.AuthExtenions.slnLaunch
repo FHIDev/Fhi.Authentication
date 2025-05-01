@@ -18,5 +18,18 @@
         "DebugTarget": "localhost (Chrome)"
       }
     ]
+  },
+  {
+    "Name": "Worker and API",
+    "Projects": [
+      {
+        "Path": "samples\\WebApi\\WebApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\WorkerService.ClientCredential\\WorkerService.csproj",
+        "Action": "Start"
+      }
+    ]
   }
 ]

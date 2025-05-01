@@ -13,6 +13,10 @@ namespace WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            var authenticationSettingsSection = builder.Configuration.GetSection("Authentication");
+            builder.Services.Configure<AuthenticationSettings>(authenticationSettingsSection);
+            var authenticationSettings = authenticationSettingsSection.Get<AuthenticationSettings>();
+
             /********************************************************************************************************
             * Authentication
             ********************************************************************************************************/
@@ -23,13 +27,14 @@ namespace WebApi
             })
                 .AddJwtBearer("bearer.me", options =>
                 {
-                    options.Audience = "fhi:webapi";
-                    options.Authority = "https://localhost:5001/";
+                    options.Audience = authenticationSettings?.Audience;
+                    options.Authority = authenticationSettings?.Authority;
                 })
+                //Sample of having different handling for some endpoints with policies or setup trust with another OIDC provider
                 .AddJwtBearer("bearer.integration", options =>
                 {
-                    options.Audience = "fhi:webapi";
-                    options.Authority = "https://localhost:5001/";
+                    options.Audience = authenticationSettings?.Audience;
+                    options.Authority = authenticationSettings?.Authority;
                 });
 
             builder.Services.AddTransient<IHealthRecordService, HealthRecordService>();
@@ -47,6 +52,7 @@ namespace WebApi
                 .AddPolicy("EndUserPolicy", policy =>
                 {
                     policy.AuthenticationSchemes.Add("bearer.me");
+                    policy.RequireClaim("sub");
                     policy.RequireClaim("scope", "fhi:webapi/access");
                     policy.RequireAuthenticatedUser();
                 })
@@ -55,7 +61,6 @@ namespace WebApi
                      policy.AuthenticationSchemes.Add("bearer.integration");
                      policy.RequireAuthenticatedUser();
                  });
-
 
             return builder.Build();
         }

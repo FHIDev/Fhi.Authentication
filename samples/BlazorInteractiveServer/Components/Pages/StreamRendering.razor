@@ -60,11 +60,13 @@ Stream rendering sample
         }        
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (_result?.ShouldNavigate == true && !string.IsNullOrEmpty(_result.NavigateTo))
         {
             NavigationService.RedirectToLogin();
         }
+
+        return Task.CompletedTask;
     }
 }

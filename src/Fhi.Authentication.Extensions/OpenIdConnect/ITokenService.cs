@@ -1,25 +1,29 @@
 ﻿using Duende.AccessTokenManagement.OpenIdConnect;
+using Microsoft.Extensions.Logging;
 
 namespace Fhi.Authentication.OpenIdConnect
 {
     public record TokenResponse(bool IsError = false);
-
+    /// <summary>
+    /// Abstraction for token service.
+    /// TODO: response should be improved
+    /// </summary>
     public interface ITokenService
     {
         Task<TokenResponse> RefreshAccessTokenAsync(string refreshToken);
     }
 
-    public class DefaultTokenService : ITokenService
+    internal class DefaultTokenService(IUserTokenEndpointService UserTokenEndpointService, ILogger<DefaultTokenService> Logger) : ITokenService
     {
-        private readonly IUserTokenEndpointService _userTokenEndpointService;
-
-        public DefaultTokenService(IUserTokenEndpointService userTokenEndpointService)
-        {
-            _userTokenEndpointService = userTokenEndpointService;
-        }
         public async Task<TokenResponse> RefreshAccessTokenAsync(string refreshToken)
         {
-            var refreshedTokens = await _userTokenEndpointService.RefreshAccessTokenAsync(new UserToken() { RefreshToken = refreshToken }, new UserTokenRequestParameters());
+            var userToken = await UserTokenEndpointService.RefreshAccessTokenAsync(new UserToken() { RefreshToken = refreshToken }, new UserTokenRequestParameters());
+            if (userToken.IsError)
+            {
+                Logger.LogError(userToken.Error);
+                return new TokenResponse(true);
+            }
+
             return new TokenResponse();
         }
     }

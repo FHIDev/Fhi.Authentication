@@ -5,13 +5,14 @@ using Microsoft.Extensions.Logging;
 namespace Fhi.Authentication.OpenIdConnect
 {
     /// <summary>
-    /// Default implementation of <see cref="CookieAuthenticationEvents"/> for web clients using OpenId Connect with downstream API call.
+    /// Default implementation of <see cref="CookieAuthenticationEvents"/> for web clients using OpenId Connect with downstream API calls
+    /// with refresh token.
     /// </summary>
-    public class DefaultCookieEvent : CookieAuthenticationEvents
+    public class OpenIdConnectCookieEventsForApi : BasicCookieAuthenticationEvents
     {
-        private readonly ILogger<DefaultCookieEvent> _logger;
+        private readonly ILogger<OpenIdConnectCookieEventsForApi> _logger;
 
-        public DefaultCookieEvent(ILogger<DefaultCookieEvent> logger)
+        public OpenIdConnectCookieEventsForApi(ILogger<OpenIdConnectCookieEventsForApi> logger)
         {
             _logger = logger;
         }
@@ -39,5 +40,11 @@ namespace Fhi.Authentication.OpenIdConnect
 
             await base.SigningOut(context);
         }
+
+    }
+
+    public class BasicCookieAuthenticationEvents : CookieAuthenticationEvents
+    {
+
     }
 }

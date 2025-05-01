@@ -4,9 +4,9 @@ using System.Security.Claims;
 
 namespace Fhi.Authentication.Tokens
 {
-    public class DefaultClientAssertionTokenHandler : IClientAssertionTokenHandler
+    public static class ClientAssertionTokenHandler
     {
-        public string CreateJwtToken(string issuer, string clientId, string jwk)
+        public static string CreateJwtToken(string issuer, string clientId, string jwk)
         {
             var securityKey = new JsonWebKey(jwk);
             string token = CreateJwtToken(issuer, clientId, securityKey);
@@ -14,7 +14,15 @@ namespace Fhi.Authentication.Tokens
             return token;
         }
 
-        public string CreateJwtToken(string issuer, string clientId, JsonWebKey securityKey)
+        //public static string CreateJwtToken(string issuer, string clientId, string certificatePath, string certificatePassword)
+        //{
+        //    var certificate = new X509Certificate2(certificatePath, certificatePassword);
+        //    var securityKey = new X509SecurityKey(certificate);
+        //    string token = CreateJwtToken(issuer, clientId, securityKey);
+        //    return token;
+        //}
+
+        private static string CreateJwtToken(string issuer, string clientId, JsonWebKey securityKey)
         {
             var claims = new List<Claim>
             {
@@ -33,5 +41,6 @@ namespace Fhi.Authentication.Tokens
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             return token;
         }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Fhi.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 
@@ -20,12 +21,27 @@ namespace WebApi.Authorization
         {
             if (authorizeResult.Forbidden && authorizeResult.AuthorizationFailure is not null)
             {
-                var scopeRequirement = authorizeResult.AuthorizationFailure.FailureReasons.FirstOrDefault(x => x.Handler.GetType() == typeof(ScopeHandler));
-                if (scopeRequirement != null)
-                    context.Response.Headers.Append("WWW-Authenticate", $"error=\"insufficient_scope\", error_description=\" {scopeRequirement?.Message}");
+                var scopeFailure = authorizeResult.AuthorizationFailure.FailureReasons.FirstOrDefault(r => r.Handler is ScopeHandler);
+                if (scopeFailure != null)
+                {
+                    var errorCode = "insufficient_scope";
+                    var errorDescription = scopeFailure.Message;
+                    await SetWWWAuthenticateHeader(context, policy, errorCode, errorDescription);
+                }
             }
 
             await defaultHandler.HandleAsync(next, context, policy, authorizeResult);
+        }
+
+        private static async Task SetWWWAuthenticateHeader(HttpContext context, AuthorizationPolicy policy, string errorCode, string errorDescription)
+        {
+            var authResult = await context.AuthenticateAsync();
+            var scheme = authResult?.Ticket?.AuthenticationScheme
+                         ?? policy.AuthenticationSchemes.FirstOrDefault()
+                         ?? "Bearer"; // Fallback
+
+            context.Response.Headers.Append("WWW-Authenticate",
+                $"{scheme} error=\"{errorCode}\", error_description=\"{errorDescription}\"");
         }
     }
 }

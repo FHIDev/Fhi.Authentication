@@ -18,7 +18,6 @@
 	<PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.7.0" />
 	<PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.7.0" />
 	<PackageVersion Include="Duende.AccessTokenManagement.OpenIdConnect" Version="3.2.0" />
-	<PackageVersion Include="Microsoft.AspNetCore.Authorization.Policy" Version="2.3.0"/>
 	<PackageVersion Include="Microsoft.AspNetCore.Authorization"  Version="9.0.4" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

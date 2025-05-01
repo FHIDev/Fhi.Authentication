@@ -1,0 +1,29 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+namespace BlazorInteractiveServer.Hosting.Authentication
+{
+    public class DefaultOpenIdConnectOptions : IPostConfigureOptions<OpenIdConnectOptions>
+    {
+        public void PostConfigure(string? name, OpenIdConnectOptions options)
+        {
+            if (!options.SaveTokens)
+                options.SaveTokens = true;
+            if (!options.GetClaimsFromUserInfoEndpoint)
+                options.GetClaimsFromUserInfoEndpoint = true;
+            if (!options.MapInboundClaims)
+                options.MapInboundClaims = false;
+            options.TokenValidationParameters ??= new TokenValidationParameters();
+            if (string.IsNullOrEmpty(options.TokenValidationParameters.NameClaimType))
+            {
+                options.TokenValidationParameters.NameClaimType = "sub";
+            }
+            // Only add claim action if not already present
+            //if (!options.ClaimActions.Any(ca => ca.ClaimType == "sub"))
+            //{
+            //    options.ClaimActions.MapJsonKey("sub", "sub");
+            //}
+        }
+    }
+}

@@ -3,14 +3,14 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Fhi.Authentication.Tokens
 {
-    public interface IDPoPProofHandler
+    internal interface IDPoPProofHandler
     {
         public string CreateDPoPProof(string url, string httpMethod, string key);
         public string CreateDPoPProofWithNonce(string url, string httpMethod, string jwk, string dPoPNonce);
         public string CreateDPoPProofWithAccessToken(string url, string httpMethod, string jwk, string accessToken);
     }
 
-    public class DefaultDPoPProofHandler : IDPoPProofHandler
+    internal class DefaultDPoPProofHandler : IDPoPProofHandler
     {
         public string CreateDPoPProof(string url, string httpMethod, string jwk)
         {

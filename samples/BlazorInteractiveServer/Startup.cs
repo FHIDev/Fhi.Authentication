@@ -2,15 +2,16 @@
 using BlazorInteractiveServer.Hosting.Authentication;
 using BlazorInteractiveServer.Services;
 using BlazorInteractiveServerWebApp.Services;
+using Duende.AccessTokenManagement;
 using Duende.AccessTokenManagement.OpenIdConnect;
-using Fhi.Authentication.OpenIdConnect;
-using Fhi.Authentication.Tokens;
+using Duende.IdentityModel.Client;
+using Fhi.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 
 internal static partial class Startup
 {
@@ -27,19 +28,18 @@ internal static partial class Startup
             options.DefaultSignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
         }).AddCookie(options =>
         {
-            options.Cookie.Name = "BlazorSample";
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            /*****************************************************************************************
+            * ExpireTimeSpan should be set to a value before refresh token expirers. This is to ensure that the cookie is not expired 
+            * when the refresh token is expired used to get a new access token in downstream API calls. Default is 14 days. 
+            * The AddOpenIdConnectCookieEventServices defaults it to 60 minutes.
+            * ***************************************************************************************/
             options.ExpireTimeSpan = TimeSpan.FromSeconds(30);
-            options.SlidingExpiration = true;
-            options.Cookie.HttpOnly = true;
-            options.Cookie.IsEssential = true;
-            options.EventsType = typeof(DefaultCookieEvent);
         })
         .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
         {
             options.Authority = authenticationSettings?.Authority;
             options.ClientId = authenticationSettings?.ClientId;
-            options.ClientSecret = authenticationSettings?.ClientSecret;
+            //options.ClientSecret = authenticationSettings?.ClientSecret;
             options.CallbackPath = "/signin-oidc";
             options.ResponseType = "code";
             options.EventsType = typeof(BlazorOpenIdConnectEvents);
@@ -49,20 +49,26 @@ internal static partial class Startup
             options.Scope.Add("profile");
             options.Scope.Add("offline_access");
             options.Scope.Add("fhi:webapi/access");
-            options.SaveTokens = true;
-            options.GetClaimsFromUserInfoEndpoint = true;
-            options.MapInboundClaims = false;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                NameClaimType = "sub",
-            };
-
-            options.ClaimActions.MapJsonKey("sub", "sub");
         });
-        builder.Services.AddTransient<IClientAssertionTokenHandler, DefaultClientAssertionTokenHandler>();
-        builder.Services.AddTransient<DefaultCookieEvent>();
+
+        /*****************************************************************************************************************************
+         * Add default handling for OpenIdConnect events using cookie authentication. This is used to handle token expiration for
+         * downstream API calls and sets default cookie options.
+         **********************************************************************************************************************************/
+        builder.Services.AddOpenIdConnectCookieEventServices();
+        builder.Services.AddSingleton<IPostConfigureOptions<OpenIdConnectOptions>, DefaultOpenIdConnectOptions>();
+
         builder.Services.AddTransient<BlazorOpenIdConnectEvents>();
-        builder.Services.AddTransient<ITokenService, DefaultTokenService>();
+
+        /**************************************************************************************************************************************************
+         * Handling downstream API call with client assertions.                                                                   *
+         **************************************************************************************************************************************************/
+        builder.Services.AddTransient<IClientAssertionService, ClientAssertionService>();
+        builder.Services.AddSingleton<IDiscoveryCache>(serviceProvider =>
+        {
+            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            return new DiscoveryCache(authenticationSettings!.Authority, () => httpClientFactory.CreateClient());
+        });
 
         /**************************************************************************************************************************************************
         * Handling downstream API call with token handling. Since Blazor uses SignalR tokens are not available through httpcontext. Tokens must be stored *
@@ -72,7 +78,7 @@ internal static partial class Startup
         builder.Services.AddOpenIdConnectAccessTokenManagement()
         .AddBlazorServerAccessTokenManagement<InMemoryUserTokenStore>();
 
-
+        //TODO: Should create a Blozor project and nuget package
         builder.Services.AddScoped<AuthenticationStateProvider, CustomRevalidatingAuthenticationStateProvider>();
         builder.Services.AddScoped<NavigationService>();
         builder.Services.AddCascadingAuthenticationState();
@@ -82,7 +88,17 @@ internal static partial class Startup
             "WebApi",
             parameters: new UserTokenRequestParameters()
             {
-                SignInScheme = OpenIdConnectDefaults.AuthenticationScheme
+                SignInScheme = OpenIdConnectDefaults.AuthenticationScheme,
+                /******************************************************************************************
+                 * Optionally clientAssertion can be set as parameter or it will by default use IClientAssertionService
+                 *****************************************************************************************/
+                //Assertion = new ClientAssertion
+                //{
+                //    Type = OidcConstants.ClientAssertionTypes.JwtBearer,
+                //    Value = ClientAssertionTokenHandler.CreateJwtToken(authenticationSettings?.ClientId,
+                //        "issuer", //Manually set issuer or use the discovery document
+                //        authenticationSettings.ClientSecret)
+                //}
             },
             configureClient: client =>
             {
@@ -111,7 +127,6 @@ internal static partial class Startup
         return builder;
     }
 
-
     internal static WebApplication ConfigurePipeline(this WebApplication app)
     {
         app.MapGet("/logout", async (HttpContext context) =>
@@ -133,4 +148,5 @@ internal static partial class Startup
 
         return app;
     }
+
 }

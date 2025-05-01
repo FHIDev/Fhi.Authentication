@@ -1,18 +1,16 @@
 using Duende.AccessTokenManagement;
-using Fhi.Authentication.Tokens;
 using WorkerService.ClientCredential;
 using WorkerService.Workers;
 
 var builder = Host.CreateApplicationBuilder(args);
-//builder.Services.AddHostedService<ClientCredentialDPoPTokenWorker>();
+builder.Services.AddHostedService<ClientCredentialDPoPTokenWorker>();
 builder.Services.AddHostedService<ClientCredentialBearerTokenWorker>();
 
-builder.Services.AddTransient<IClientAssertionService, ClientAssertionService>();
-builder.Services.AddTransient<IClientAssertionTokenHandler, DefaultClientAssertionTokenHandler>();
+builder.Services.AddTransient<IClientAssertionService, ClientCredentialAssertionService>();
 
 builder.Services.AddDistributedMemoryCache();
 
-//register token management for clients
+//register token management for Http clients
 var clientConfiguration = new ClientConfiguration();
 builder.Configuration.GetSection("ClientConfiguration").Bind(clientConfiguration);
 builder.Services.Configure<ClientConfiguration>(builder.Configuration.GetSection("ClientConfiguration"));
@@ -32,17 +30,17 @@ builder.Services
         options.ClientId = clientConfiguration.ClientId;
         options.Scope = clientConfiguration.Scope;
         //Can use client assertion key or generate a new
-        options.DPoPJsonWebKey = clientConfiguration.PrivateJwk;
+        options.DPoPJsonWebKey = clientConfiguration.Secret;
     });
 
 // Register HTTP client
 builder.Services.AddTransient<LoggingHandler>();
-builder.Services.AddClientCredentialsHttpClient("health-records", clientConfiguration.ClientName, client =>
+builder.Services.AddClientCredentialsHttpClient(clientConfiguration.ClientName, clientConfiguration.ClientName, client =>
 {
     client.BaseAddress = new Uri("https://localhost:7150");
 }).AddHttpMessageHandler<LoggingHandler>();
 
-builder.Services.AddClientCredentialsHttpClient("health-records.dpop", clientConfiguration.ClientName + ".dpop", client =>
+builder.Services.AddClientCredentialsHttpClient(clientConfiguration.ClientName + ".dpop", clientConfiguration.ClientName + ".dpop", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7150");
 }).AddHttpMessageHandler<LoggingHandler>();
