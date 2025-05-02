@@ -1,6 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\Src.Packages.props" />
-	<Import Project="..\Src.Build.props"/>
   <PropertyGroup>
 	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <IsTestProject>true</IsTestProject>
@@ -20,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fhi.Authentication.Extensions\Fhi.Authentication.Extensions.csproj" />
+    <ProjectReference Include="..\..\src\Fhi.Authentication.Extensions\Fhi.Authentication.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\Src.Packages.props" />
-	<Import Project="..\Src.Build.props" />
-	<Import Project="..\Src.NugetBuild.props" />
+   <!-- Imports for central package management and build props are now handled by Directory.Build.props -->
   <PropertyGroup>
 	<VersionPrefix>1.0.0-alpha</VersionPrefix>
 	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-    <RootNamespace>Fhi.Authentication</RootNamespace>
+	<RootNamespace>Fhi.Authentication</RootNamespace>
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />

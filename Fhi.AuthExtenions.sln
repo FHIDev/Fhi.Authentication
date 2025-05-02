@@ -3,6 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02410E46-D7E9-4870-8BEE-2667E121C388}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E1C34547-3ACD-4E54-BB6A-3E5DCBFFFF02}"
 EndProject
@@ -12,10 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "samples\WebApi\We
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AAE28A25-3640-4A1D-808A-6B58DB17CE3C}"
 	ProjectSection(SolutionItems) = preProject
-		samples\Sample.Packages.props = samples\Sample.Packages.props
-		src\Src.Build.props = src\Src.Build.props
-		src\Src.Packages.props = src\Src.Packages.props
-		src\Src.NugetBuild.props = src\Src.NugetBuild.props
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AngularClientBFF", "AngularClientBFF", "{95D7F6A2-3153-4DEA-A5B2-99FB116ECED7}"
@@ -26,11 +26,16 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Angular.Client", "samples\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authentication.Extensions", "src\Fhi.Authentication.Extensions\Fhi.Authentication.Extensions.csproj", "{3D40162D-4861-1586-9DF4-29AC796D09D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authentication.Extensions.UnitTests", "src\Fhi.Authentication.Extensions.UnitTests\Fhi.Authentication.Extensions.UnitTests.csproj", "{82E63B4A-6478-080D-DCF0-C814E5A2FA98}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorInteractiveServer", "samples\BlazorInteractiveServer\BlazorInteractiveServer.csproj", "{7BF40662-B1BD-73D8-F111-BC6C533986D3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authorization.Extensions", "src\Fhi.Authorization.Extensions\Fhi.Authorization.Extensions.csproj", "{E895929D-F0B6-46CC-A8DA-4CDCBD0E813F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authentication.Extensions.UnitTests", "tests\Fhi.Authentication.Extensions.UnitTests\Fhi.Authentication.Extensions.UnitTests.csproj", "{74FE561C-B596-014B-90CE-501DD27B2A90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,10 +65,6 @@ Global
 		{3D40162D-4861-1586-9DF4-29AC796D09D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D40162D-4861-1586-9DF4-29AC796D09D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D40162D-4861-1586-9DF4-29AC796D09D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82E63B4A-6478-080D-DCF0-C814E5A2FA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82E63B4A-6478-080D-DCF0-C814E5A2FA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82E63B4A-6478-080D-DCF0-C814E5A2FA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82E63B4A-6478-080D-DCF0-C814E5A2FA98}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BF40662-B1BD-73D8-F111-BC6C533986D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7BF40662-B1BD-73D8-F111-BC6C533986D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BF40662-B1BD-73D8-F111-BC6C533986D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -72,6 +73,10 @@ Global
 		{E895929D-F0B6-46CC-A8DA-4CDCBD0E813F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E895929D-F0B6-46CC-A8DA-4CDCBD0E813F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E895929D-F0B6-46CC-A8DA-4CDCBD0E813F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74FE561C-B596-014B-90CE-501DD27B2A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74FE561C-B596-014B-90CE-501DD27B2A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74FE561C-B596-014B-90CE-501DD27B2A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74FE561C-B596-014B-90CE-501DD27B2A90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,9 +88,9 @@ Global
 		{B21CD024-F221-452E-B338-B705AD216711} = {95D7F6A2-3153-4DEA-A5B2-99FB116ECED7}
 		{94D51406-BAE5-4C38-B805-0559BA269336} = {95D7F6A2-3153-4DEA-A5B2-99FB116ECED7}
 		{3D40162D-4861-1586-9DF4-29AC796D09D7} = {02410E46-D7E9-4870-8BEE-2667E121C388}
-		{82E63B4A-6478-080D-DCF0-C814E5A2FA98} = {02410E46-D7E9-4870-8BEE-2667E121C388}
 		{7BF40662-B1BD-73D8-F111-BC6C533986D3} = {E1C34547-3ACD-4E54-BB6A-3E5DCBFFFF02}
 		{E895929D-F0B6-46CC-A8DA-4CDCBD0E813F} = {02410E46-D7E9-4870-8BEE-2667E121C388}
+		{74FE561C-B596-014B-90CE-501DD27B2A90} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {113A468C-B364-454A-BDF5-BE678F61C31A}

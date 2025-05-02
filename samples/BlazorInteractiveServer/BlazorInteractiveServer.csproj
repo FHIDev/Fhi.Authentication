@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-	<Import Project="..\Sample.Packages.props" />
   <PropertyGroup>
 	<TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -9,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Hosting" />
     <PackageReference Include="Serilog.Sinks.Console" />
