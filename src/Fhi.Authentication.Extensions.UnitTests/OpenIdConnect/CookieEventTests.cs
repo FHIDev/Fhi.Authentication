@@ -12,26 +12,31 @@ namespace Fhi.Authentication.Extensions.UnitTests.OpenIdConnect
     public class CookieEventTests
     {
         [Test]
-        public void ValidatePrincipal_UserAuthenticatedButNoToken_RejectPrincipalAndRenew()
+        public async Task ValidatePrincipal_UserAuthenticatedButNoToken_RejectPrincipalAndRenew()
         {
             var cookieContext = new CookieContextBuilder()
                 .WithAuthenticatedPrincipal(true)
                 .Build();
 
-            Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
-            Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
+                Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            }
 
             var cookieEvent = new OpenIdConnectCookieEventsForApi(Substitute.For<ILogger<OpenIdConnectCookieEventsForApi>>());
-            var result = cookieEvent.ValidatePrincipal(cookieContext);
+            await cookieEvent.ValidatePrincipal(cookieContext);
 
-            Assert.That(cookieContext.ShouldRenew, Is.True, "Expected RejectPrincipalAndRenew result");
-            Assert.That(cookieContext.Principal, Is.Null, "Not authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.True, "Expected RejectPrincipalAndRenew result");
+                Assert.That(cookieContext.Principal, Is.Null, "Not authenticated user");
+            }
         }
 
         [Test]
-        public void ValidatePrincipal_UserAuthenticatedTokenAndAccessTokenExpiredButRefreshTokenValid_ShouldNotRenew()
+        public async Task ValidatePrincipal_UserAuthenticatedTokenAndAccessTokenExpiredButRefreshTokenValid_ShouldNotRenew()
         {
-
             var cookieContext = new CookieContextBuilder()
                 .WithAuthenticatedPrincipal(true)
                 .WithRefreshAccessTokenError(false)
@@ -41,18 +46,24 @@ namespace Fhi.Authentication.Extensions.UnitTests.OpenIdConnect
                     new AuthenticationToken { Name = "expires_at", Value = DateTimeOffset.UtcNow.AddMinutes(-1).ToString("o") }
                 )
                 .Build();
-            Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
-            Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
+                Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            }
 
             var cookieEvent = new OpenIdConnectCookieEventsForApi(Substitute.For<ILogger<OpenIdConnectCookieEventsForApi>>());
-            var result = cookieEvent.ValidatePrincipal(cookieContext);
+            await cookieEvent.ValidatePrincipal(cookieContext);
 
-            Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
-            Assert.That(cookieContext.Principal.Identity.IsAuthenticated, Is.True, "Authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
+                Assert.That(cookieContext.Principal.Identity.IsAuthenticated, Is.True, "Authenticated user");
+            }
         }
 
         [Test]
-        public void ValidatePrincipal_UserAuthenticatedAndTokensNotExpired_ShouldNotRenew()
+        public async Task ValidatePrincipal_UserAuthenticatedAndTokensNotExpired_ShouldNotRenew()
         {
             var cookieContext = new CookieContextBuilder()
                 .WithRefreshAccessTokenError(false)
@@ -62,20 +73,25 @@ namespace Fhi.Authentication.Extensions.UnitTests.OpenIdConnect
                     new AuthenticationToken { Name = "expires_at", Value = DateTimeOffset.UtcNow.AddMinutes(10).ToString("o") }
                 )
                 .Build();
-            Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
-            Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
+                Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            }
 
             var cookieEvent = new OpenIdConnectCookieEventsForApi(Substitute.For<ILogger<OpenIdConnectCookieEventsForApi>>());
-            var result = cookieEvent.ValidatePrincipal(cookieContext);
+            await cookieEvent.ValidatePrincipal(cookieContext);
 
-            Assert.That(cookieContext.ShouldRenew, Is.False, "Should not renew when tokens are valid");
-            Assert.That(cookieContext.Principal.Identity.IsAuthenticated, Is.True, "Authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.False, "Should not renew when tokens are valid");
+                Assert.That(cookieContext.Principal.Identity.IsAuthenticated, Is.True, "Authenticated user");
+            }
         }
 
         [Test]
-        public void ValidatePrincipal_MissingRefreshToken_RejectPrincipalAndRenew()
+        public async Task ValidatePrincipal_MissingRefreshToken_RejectPrincipalAndRenew()
         {
-            var tokenService = Substitute.For<ITokenService>();
             var cookieContext = new CookieContextBuilder()
                 .WithAuthenticatedPrincipal(true)
                 .WithRefreshAccessTokenError(false)
@@ -84,22 +100,28 @@ namespace Fhi.Authentication.Extensions.UnitTests.OpenIdConnect
                     new AuthenticationToken { Name = "expires_at", Value = DateTimeOffset.UtcNow.AddMinutes(-1).ToString("o") }
                 )
                 .Build();
-            Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
-            Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.False, "Authenticated user");
+                Assert.That(cookieContext.Principal!.Identity!.IsAuthenticated, Is.True, "Authenticated user");
+            }
 
             var cookieEvent = new OpenIdConnectCookieEventsForApi(Substitute.For<ILogger<OpenIdConnectCookieEventsForApi>>());
-            var result = cookieEvent.ValidatePrincipal(cookieContext);
+            await cookieEvent.ValidatePrincipal(cookieContext);
 
-            Assert.That(cookieContext.ShouldRenew, Is.True, "Should renew when refresh token is missing");
-            Assert.That(cookieContext.Principal, Is.Null, "Not authenticated user");
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(cookieContext.ShouldRenew, Is.True, "Should renew when refresh token is missing");
+                Assert.That(cookieContext.Principal, Is.Null, "Not authenticated user");
+            }
         }
     }
 
     internal class CookieContextBuilder
     {
-        private readonly List<AuthenticationToken> _tokens = new();
+        private readonly List<AuthenticationToken> _tokens = [];
         private bool _isAuthenticated = true;
-        private ITokenService _tokenService = Substitute.For<ITokenService>();
+        private static readonly ITokenService _tokenService = Substitute.For<ITokenService>();
 
         public CookieContextBuilder WithRefreshAccessTokenError(bool isError)
         {
@@ -122,7 +144,7 @@ namespace Fhi.Authentication.Extensions.UnitTests.OpenIdConnect
 
         public CookieValidatePrincipalContext Build()
         {
-            var identity = new ClaimsIdentity(new List<Claim> { new Claim("sub", "sub value") }, "Cookies");
+            var identity = new ClaimsIdentity([new("sub", "sub value")], "Cookies");
             if (!_isAuthenticated)
                 identity = new ClaimsIdentity();
             var principal = new ClaimsPrincipal(identity);
