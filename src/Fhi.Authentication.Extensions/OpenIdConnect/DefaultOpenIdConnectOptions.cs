@@ -4,8 +4,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Fhi.Authentication.OpenIdConnect
 {
+    /// <summary>
+    /// Set default options for OpenIdConnect authentication if not already set.
+    /// </summary>
     public class DefaultOpenIdConnectOptions : IPostConfigureOptions<OpenIdConnectOptions>
     {
+        /// <inheritdoc/>
         public void PostConfigure(string? name, OpenIdConnectOptions options)
         {
             if (!options.SaveTokens)

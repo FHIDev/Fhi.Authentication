@@ -4,8 +4,18 @@ using System.Security.Claims;
 
 namespace Fhi.Authentication.Tokens
 {
+    /// <summary>
+    /// Generate Json Web Tokens (JWT) for client assertion.
+    /// </summary>
     public static class ClientAssertionTokenHandler
     {
+        /// <summary>
+        /// Create a JWT token for client assertion.
+        /// </summary>
+        /// <param name="issuer">This value is the audience, but should be set as the OIDC issues</param>
+        /// <param name="clientId">client identifier</param>
+        /// <param name="jwk">json web key string</param>
+        /// <returns></returns>
         public static string CreateJwtToken(string issuer, string clientId, string jwk)
         {
             var securityKey = new JsonWebKey(jwk);

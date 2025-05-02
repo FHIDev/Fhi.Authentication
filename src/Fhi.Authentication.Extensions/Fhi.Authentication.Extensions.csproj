@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\Src.Packages.props" />
+	<Import Project="..\Src.Build.props" />
+	<Import Project="..\Src.Nuget.props" />
   <PropertyGroup>
+	<VersionPrefix>1.0.0-alpha</VersionPrefix>
 	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-	<IsPackable>true</IsPackable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>Fhi.Authentication</RootNamespace>
   </PropertyGroup>
 	<ItemGroup>
@@ -12,5 +12,8 @@
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 </Project>

@@ -3,15 +3,29 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace Fhi.Authentication.OpenIdConnect
 {
+    /// <summary>
+    /// Extensions for OpenIdConnect events.
+    /// </summary>
     public static class OpenIdConnectEventsExtensions
     {
         private const string ClientAssertionType = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
-
+        /// <summary>
+        /// This method is used to create a client assertion for the authorization code flow.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static async Task AuthorizationCodeReceivedWithClientAssertionAsync(this AuthorizationCodeReceivedContext context)
         {
             await AuthorizationCodeReceivedWithClientAssertionAsync(context, context.Options.ClientId!, context.Options.ClientSecret!);
         }
 
+        /// <summary>
+        /// This method is used to create a client assertion for the authorization code flow.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="clientId"></param>
+        /// <param name="jwk"></param>
+        /// <returns></returns>
         public static async Task AuthorizationCodeReceivedWithClientAssertionAsync(this AuthorizationCodeReceivedContext context, string clientId, string jwk)
         {
             if (context.Options.ConfigurationManager is not null)
@@ -24,12 +38,23 @@ namespace Fhi.Authentication.OpenIdConnect
         }
 
 #if NET9_0
-
+        
+        /// <summary>
+        /// This method is used to create a client assertion for the authorization code flow.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static async Task PushAuthorizationWithClientAssertion(this PushedAuthorizationContext context)
         {
             await PushAuthorizationWithClientAssertion(context, context.Options.ClientId!, context.Options.ClientSecret!);
         }
-
+        /// <summary>
+        /// This method is used to create a client assertion for the authorization code flow.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="clientId"></param>
+        /// <param name="jwk"></param>
+        /// <returns></returns>
         public static async Task PushAuthorizationWithClientAssertion(this PushedAuthorizationContext context, string clientId, string jwk)
         {
             if (context.Options.ConfigurationManager is not null)

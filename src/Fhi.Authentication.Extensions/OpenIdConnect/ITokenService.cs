@@ -3,6 +3,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Fhi.Authentication.OpenIdConnect
 {
+    /// <summary>
+    /// Response for token validation.
+    /// </summary>
+    /// <param name="IsError"></param>
     public record TokenResponse(bool IsError = false);
     /// <summary>
     /// Abstraction for token service.
@@ -10,6 +14,11 @@ namespace Fhi.Authentication.OpenIdConnect
     /// </summary>
     public interface ITokenService
     {
+        /// <summary>
+        /// Refresh access token.
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
         Task<TokenResponse> RefreshAccessTokenAsync(string refreshToken);
     }
 

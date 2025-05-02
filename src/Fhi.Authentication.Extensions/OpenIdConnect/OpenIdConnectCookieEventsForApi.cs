@@ -29,6 +29,11 @@ namespace Fhi.Authentication.OpenIdConnect
             }
         }
 
+        /// <summary>
+        /// This method is called when the user is signing out. Revokes refresh tokens.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override async Task SigningOut(CookieSigningOutContext context)
         {
             await context.HttpContext.RevokeRefreshTokenAsync();
@@ -38,6 +43,9 @@ namespace Fhi.Authentication.OpenIdConnect
 
     }
 
+    /// <summary>
+    /// Basic handling of cookie authentication events.
+    /// </summary>
     public class BasicCookieAuthenticationEvents : CookieAuthenticationEvents
     {
 

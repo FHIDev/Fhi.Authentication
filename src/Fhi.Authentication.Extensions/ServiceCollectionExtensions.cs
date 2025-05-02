@@ -5,6 +5,9 @@ using Microsoft.Extensions.Options;
 
 namespace Fhi.Authentication
 {
+    /// <summary>
+    /// Extensions for adding OpenIdConnect authentication services to the service collection.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>

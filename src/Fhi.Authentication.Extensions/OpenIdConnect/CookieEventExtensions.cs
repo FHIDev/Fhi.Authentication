@@ -6,6 +6,9 @@ using System.Globalization;
 
 namespace Fhi.Authentication.OpenIdConnect
 {
+    /// <summary>
+    /// Extensions for handling cookie events in OpenID Connect authentication.
+    /// </summary>
     public static class CookieEventExtensions
     {
         /// <summary>
@@ -52,7 +55,12 @@ namespace Fhi.Authentication.OpenIdConnect
 
             return new TokenValidateResponse(false);
         }
-
+        /// <summary>
+        /// Response for token validation.
+        /// </summary>
+        /// <param name="IsError">Values True or False</param>
+        /// <param name="Error">Error type</param>
+        /// <param name="ErrorDescription">Description of error</param>
         public record TokenValidateResponse(bool IsError, string Error = "", string ErrorDescription = "");
     }
 }

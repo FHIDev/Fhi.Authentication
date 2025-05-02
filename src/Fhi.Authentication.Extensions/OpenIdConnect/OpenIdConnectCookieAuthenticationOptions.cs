@@ -4,8 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace Fhi.Authentication.OpenIdConnect
 {
+    /// <summary>
+    /// Setting default values for OpenIdConnect authentication.
+    /// </summary>
     public class OpenIdConnectCookieAuthenticationOptions : IPostConfigureOptions<CookieAuthenticationOptions>
     {
+        /// <inheritdoc/>
         public void PostConfigure(string? name, CookieAuthenticationOptions options)
         {
             if (name == CookieAuthenticationDefaults.AuthenticationScheme)

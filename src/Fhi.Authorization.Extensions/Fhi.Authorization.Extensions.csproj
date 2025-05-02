@@ -1,15 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\Src.Packages.props" />
+	<Import Project="..\Src.Build.props"/>
+	<Import Project="..\Src.Nuget.props"/>
   <PropertyGroup>
-	  <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-	  <IsPackable>true</IsPackable>
-    <Nullable>enable</Nullable>
+	<VersionPrefix>1.0.0-alpha</VersionPrefix>
+	<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 	<RootNamespace>Fhi.Authorization</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" />
   </ItemGroup>
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
 
 </Project>
