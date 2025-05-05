@@ -4,12 +4,12 @@ namespace Fhi.Auth.IntegrationTests
 {
     public partial class Tests
     {
-        public class FakeAuthHandler : AuthenticationHandler<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions>
+        public class FakeAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
         {
             public static IEnumerable<System.Security.Claims.Claim> TestClaims { get; set; } = [];
 
             public FakeAuthHandler(
-                Microsoft.Extensions.Options.IOptionsMonitor<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions> options,
+                Microsoft.Extensions.Options.IOptionsMonitor<AuthenticationSchemeOptions> options,
                 Microsoft.Extensions.Logging.ILoggerFactory logger,
                 System.Text.Encodings.Web.UrlEncoder encoder)
                 : base(options, logger, encoder) { }

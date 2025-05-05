@@ -13,8 +13,12 @@ namespace Fhi.Auth.IntegrationTests
 {
     public partial class Tests
     {
+        /// <summary>
+        /// Verify scope authorization works as expected when endpoint has scope attribute.
+        /// </summary>
+        /// <returns></returns>
         [Test]
-        public async Task ScopeAuthorization_PrincipalHasScope()
+        public async Task EndpointWithScopeAuthorization()
         {
             FakeAuthHandler.TestClaims =
             [
@@ -22,7 +26,8 @@ namespace Fhi.Auth.IntegrationTests
                 new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "Test User")
             ];
 
-            var builder = WebApplicationBuilderTestHost.CreateWebHostBuilder()
+            var builder = WebApplicationBuilderTestHost
+                .CreateWebHostBuilder()
                 .WithServices(services =>
                 {
                     services.AddAuthentication("Fake")

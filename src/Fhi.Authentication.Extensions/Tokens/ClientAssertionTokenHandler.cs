@@ -51,6 +51,5 @@ namespace Fhi.Authentication.Tokens
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             return token;
         }
-
     }
 }

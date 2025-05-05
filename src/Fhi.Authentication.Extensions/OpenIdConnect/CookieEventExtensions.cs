@@ -50,7 +50,6 @@ namespace Fhi.Authentication.OpenIdConnect
                         return new TokenValidateResponse(true, "ExpiredRefreshToken", "Refresh token is expired. Rejecting principal so that the user can re-authenticate");
                     }
                 }
-
             }
 
             return new TokenValidateResponse(false);
