@@ -40,7 +40,7 @@ internal static partial class Startup
         {
             options.Authority = authenticationSettings?.Authority;
             options.ClientId = authenticationSettings?.ClientId;
-            //options.ClientSecret = authenticationSettings?.ClientSecret;
+            ////options.ClientSecret = authenticationSettings?.ClientSecret;
             options.CallbackPath = "/signin-oidc";
             options.ResponseType = "code";
             options.EventsType = typeof(BlazorOpenIdConnectEvents);
