@@ -19,7 +19,7 @@ namespace Fhi.Authentication.Tokens
         public static string CreateJwtToken(string issuer, string clientId, string jwk)
         {
             var securityKey = new JsonWebKey(jwk);
-            string token = CreateJwtToken(issuer, clientId, securityKey);
+            var token = CreateJwtToken(issuer, clientId, securityKey);
 
             return token;
         }
