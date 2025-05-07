@@ -78,7 +78,7 @@ namespace WorkerService.Workers
                     },
                     Scope = _clientConfigurations.Scope
                 });
-            _logger.LogInformation("Duende manuel response: " + duendeTokenResponse.AccessToken);
+            _logger.LogInformation("Duende manual response: " + duendeTokenResponse.AccessToken);
 
             /************************************************************************************************
             * Using registered HttpClient with Duende Http Delegation handler to create bearer token. 
