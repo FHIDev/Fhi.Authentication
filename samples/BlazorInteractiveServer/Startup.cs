@@ -72,7 +72,7 @@ internal static partial class Startup
         });
 
         /**************************************************************************************************************************************************
-        * Handling downstream API call with token handling. Since Blazor uses SignalR tokens are not available through httpcontext. Tokens must be stored *
+        * Handling downstream API call with token handling. Since Blazor uses SignalR, tokens are not available through httpcontext. Tokens must be stored *
         * in in another persistent secure storage available for the downstream API call                                                                   *
         /**************************************************************************************************************************************************/
         builder.Services.AddDistributedMemoryCache();
