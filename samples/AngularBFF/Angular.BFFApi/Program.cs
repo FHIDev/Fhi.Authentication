@@ -173,7 +173,7 @@ app.MapGet("/session", [AllowAnonymous] (HttpContext context) =>
 /************************************************************************************************
  * The code below is the logout call from the frontend. Must be logging out from both the cookie and 
  * OpenIdConnect authentication schemes. If other authentication schemes are used, it should logout 
- * from those as well. RevokeRefreshTokenAsync can alio be handled in the CookieEvents class.
+ * from those as well. RevokeRefreshTokenAsync can also be handled in the CookieEvents class.
  ***********************************************************************************************/
 app.MapGet("/logout", async (HttpContext context) =>
 {
