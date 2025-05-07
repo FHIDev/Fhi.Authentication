@@ -45,7 +45,7 @@ namespace WorkerService.Workers
                     Address = discovery.TokenEndpoint,
                     GrantType = OidcConstants.GrantTypes.ClientCredentials,
                     ClientCredentialStyle = ClientCredentialStyle.PostBody,
-                    //ClientSecret = _clientConfigurations.Secret, // This is used for shared secrets, not needed when using client assertion
+                    ////ClientSecret = _clientConfigurations.Secret, // This is used for shared secrets, not needed when using client assertion
                     ClientAssertion = new ClientAssertion()
                     {
                         Type = OidcConstants.ClientAssertionTypes.JwtBearer,
