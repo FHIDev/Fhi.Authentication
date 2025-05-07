@@ -1,5 +1,5 @@
 using Duende.AccessTokenManagement;
-using WorkerService.ClientCredential;
+using WorkerService;
 using WorkerService.Workers;
 
 var builder = Host.CreateApplicationBuilder(args);

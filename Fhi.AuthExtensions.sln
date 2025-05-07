@@ -37,7 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authentication.Extensions.UnitTests", "tests\Fhi.Authentication.Extensions.UnitTests\Fhi.Authentication.Extensions.UnitTests.csproj", "{74FE561C-B596-014B-90CE-501DD27B2A90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authorization.Extension.UnitTests", "tests\Fhi.Authorization.Extensions.UnitTests\Fhi.Authorization.Extension.UnitTests.csproj", "{80A70E21-66EC-41F3-B5BA-EB6F38275AE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Authorization.Extensions.UnitTests", "tests\Fhi.Authorization.Extensions.UnitTests\Fhi.Authorization.Extensions.UnitTests.csproj", "{80A70E21-66EC-41F3-B5BA-EB6F38275AE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhi.Auth.IntegrationTests", "tests\Fhi.Auth.IntegrationTests\Fhi.Auth.IntegrationTests.csproj", "{50310A01-6FFB-48FD-8036-2884D8003D21}"
 EndProject

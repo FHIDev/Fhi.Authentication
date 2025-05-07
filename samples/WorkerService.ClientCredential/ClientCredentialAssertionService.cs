@@ -4,7 +4,7 @@ using Duende.IdentityModel.Client;
 using Fhi.Authentication.Tokens;
 using Microsoft.Extensions.Options;
 
-namespace WorkerService.ClientCredential
+namespace WorkerService
 {
     internal class ClientCredentialAssertionService : IClientAssertionService
     {

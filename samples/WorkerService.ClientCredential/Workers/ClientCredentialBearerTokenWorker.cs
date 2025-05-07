@@ -3,7 +3,6 @@ using Duende.IdentityModel;
 using Duende.IdentityModel.Client;
 using Fhi.Authentication.Tokens;
 using Microsoft.Extensions.Options;
-using WorkerService.ClientCredential;
 
 namespace WorkerService.Workers
 {
@@ -34,7 +33,7 @@ namespace WorkerService.Workers
             /************************************************************************************************
             * Manually getting token and set authorization header on the API request. 
             * **********************************************************************************************/
-            var client = new HttpClient();
+            using var client = new HttpClient();
             //Get issuer and token endpoint from discovery document
             var discovery = await client.GetDiscoveryDocumentAsync(_clientConfigurations.Authority);
             if (discovery is not null && !discovery.IsError && discovery.Issuer is not null && discovery.TokenEndpoint is not null)

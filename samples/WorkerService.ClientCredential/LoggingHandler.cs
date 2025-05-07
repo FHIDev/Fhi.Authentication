@@ -1,4 +1,8 @@
-﻿public class LoggingHandler : DelegatingHandler
+﻿
+/// <summary>
+/// Note: This is not production code. It is sample code for demonstration of requests only.
+/// </summary>
+public class LoggingHandler : DelegatingHandler
 {
     private readonly ILogger<LoggingHandler> _logger;
 

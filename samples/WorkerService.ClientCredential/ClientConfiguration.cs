@@ -1,4 +1,4 @@
-﻿namespace WorkerService.ClientCredential
+﻿namespace WorkerService
 {
     public class ClientConfiguration
     {
