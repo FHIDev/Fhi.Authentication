@@ -17,7 +17,6 @@ namespace Fhi.Authorization.IntegrationTests
                 ])),
                 null);
 
-
             await scopeHandler.HandleAsync(context);
 
             Assert.That(context.HasSucceeded, Is.True);
@@ -34,7 +33,6 @@ namespace Fhi.Authorization.IntegrationTests
                 [
                 ])),
                 null);
-
 
             await scopeHandler.HandleAsync(context);
 
@@ -53,7 +51,6 @@ namespace Fhi.Authorization.IntegrationTests
                     new Claim("scope", "test")
                 ])),
                 null);
-
 
             await scopeHandler.HandleAsync(context);
 
