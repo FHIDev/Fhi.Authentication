@@ -81,7 +81,7 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("offline_access");
     options.Scope.Add("fhi:webapi/access");
 });
-builder.Services.AddOpenIdConnectCookieEventServices();
+builder.Services.AddOpenIdConnectCookieOptions();
 builder.Services.AddSingleton<IPostConfigureOptions<OpenIdConnectOptions>, DefaultOpenIdConnectOptions>();
 
 /**************************************************************************************

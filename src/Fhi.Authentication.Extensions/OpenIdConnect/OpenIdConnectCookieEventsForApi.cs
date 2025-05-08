@@ -20,7 +20,7 @@ namespace Fhi.Authentication.OpenIdConnect
         /// <returns></returns>
         public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
         {
-            var validationResult = await context.ValidateTokenExpirationAsync();
+            var validationResult = await context.ValidateToken();
             if (validationResult.IsError)
             {
                 _logger.LogError("Token validation error: {Error} - {ErrorDescription}", validationResult.Error, validationResult.ErrorDescription);

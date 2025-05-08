@@ -11,11 +11,11 @@ namespace Fhi.Authentication
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the FHI authentication services to the specified <see cref="IServiceCollection" />.
+        /// Set default cookie options for OpenIdConnect. This is used to handle token expiration for downstream API calls.
         /// </summary>
         /// <param name="services">The service collection to add the authentication services to.</param>
         /// <returns>The updated service collection.</returns>
-        public static IServiceCollection AddOpenIdConnectCookieEventServices(this IServiceCollection services)
+        public static IServiceCollection AddOpenIdConnectCookieOptions(this IServiceCollection services)
         {
             services.AddTransient<OpenIdConnectCookieEventsForApi>();
             services.AddTransient<ITokenService, DefaultTokenService>();

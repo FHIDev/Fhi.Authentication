@@ -28,7 +28,7 @@ namespace Fhi.Authentication.OpenIdConnect
         /// </summary>
         /// <param name="context">The context for validating the authentication principal.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public static async Task<TokenValidationResponse> ValidateTokenExpirationAsync(this CookieValidatePrincipalContext context)
+        public static async Task<TokenValidationResponse> ValidateToken(this CookieValidatePrincipalContext context)
         {
             if (context.Principal?.Identity is not null && context.Principal.Identity.IsAuthenticated)
             {

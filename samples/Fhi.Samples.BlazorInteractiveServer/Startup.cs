@@ -55,7 +55,7 @@ internal static partial class Startup
          * Add default handling for OpenIdConnect events using cookie authentication. This is used to handle token expiration for
          * downstream API calls and set default cookie options.
          **********************************************************************************************************************************/
-        builder.Services.AddOpenIdConnectCookieEventServices();
+        builder.Services.AddOpenIdConnectCookieOptions();
         builder.Services.AddSingleton<IPostConfigureOptions<OpenIdConnectOptions>, DefaultOpenIdConnectOptions>();
 
         builder.Services.AddTransient<BlazorOpenIdConnectEvents>();
