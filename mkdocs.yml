@@ -1,0 +1,15 @@
+site_name: FHI Authentication and Authorization
+theme:
+  name: readthedocs
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+  palette:
+    primary: white
+
+nav:
+  - Home: index.md
+  - Authentication:
+      - Getting Started: authentication/getting-started.md
+      - Handling token expiration: authentication/token-expiry-downstream-api.md
+        - 

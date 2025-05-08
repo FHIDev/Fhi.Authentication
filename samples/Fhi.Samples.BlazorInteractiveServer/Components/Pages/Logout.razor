@@ -1,0 +1,13 @@
+﻿@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+    <a @onclick="LogoutRedirect">Logout</a>
+
+
+@code {
+
+    private void LogoutRedirect()
+    {
+        Navigation?.NavigateTo("/logout", true);
+    }
+}
