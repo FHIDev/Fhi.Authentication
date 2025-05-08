@@ -1,12 +1,12 @@
-﻿using BlazorInteractiveServer.Components;
-using BlazorInteractiveServer.Hosting.Authentication;
-using BlazorInteractiveServer.Services;
-using BlazorInteractiveServerWebApp.Services;
+﻿using BlazorInteractiveServer.Hosting.Authentication;
 using Duende.AccessTokenManagement;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Duende.IdentityModel.Client;
 using Fhi.Authentication;
 using Fhi.Authentication.OpenIdConnect;
+using Fhi.Samples.BlazorInteractiveServer.Components;
+using Fhi.Samples.BlazorInteractiveServer.Services;
+using Fhi.Samples.BlazorInteractiveServerWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;

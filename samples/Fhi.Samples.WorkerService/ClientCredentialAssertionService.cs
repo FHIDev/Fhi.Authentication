@@ -20,7 +20,7 @@ namespace WorkerService
         }
         public async Task<ClientAssertion?> GetClientAssertionAsync(string? clientName = null, TokenRequestParameters? parameters = null)
         {
-            var client = new HttpClient();
+            using var client = new HttpClient();
             //var options = _options.Get(clientName);
 
             //Get issuer and token endpoint from discovery document

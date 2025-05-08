@@ -55,16 +55,10 @@ namespace Fhi.Auth.IntegrationTests
             var client = app.GetTestClient();
 
             var response = await client.GetAsync("/api/access-ok");
-            Assert.Multiple(() =>
-            {
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            });
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
             var responseAccessDenied = await client.GetAsync("/api/access-denied");
-            Assert.Multiple(() =>
-            {
-                Assert.That(responseAccessDenied.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-            });
+            Assert.That(responseAccessDenied.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
         }
     }
 }

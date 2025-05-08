@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace BlazorInteractiveServer.Services
+namespace Fhi.Samples.BlazorInteractiveServer.Services
 {
     public class NavigationService
     {
