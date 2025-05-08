@@ -6,7 +6,6 @@ using Fhi.Authentication;
 using Fhi.Authentication.OpenIdConnect;
 using Fhi.Samples.BlazorInteractiveServer.Components;
 using Fhi.Samples.BlazorInteractiveServer.Services;
-using Fhi.Samples.BlazorInteractiveServerWebApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;

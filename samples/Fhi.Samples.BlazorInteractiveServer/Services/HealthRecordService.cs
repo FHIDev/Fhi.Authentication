@@ -1,6 +1,5 @@
-﻿using Fhi.Samples.BlazorInteractiveServer.Services;
-
-namespace Fhi.Samples.BlazorInteractiveServerWebApp.Services
+﻿
+namespace Fhi.Samples.BlazorInteractiveServer.Services
 {
     public class HealthRecord
     {
