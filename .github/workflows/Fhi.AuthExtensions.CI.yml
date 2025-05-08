@@ -1,4 +1,4 @@
-name: Fhi.HelseId.CI
+name: Fhi.AuthExtensions.CI
 
 on: [push, pull_request]
 
