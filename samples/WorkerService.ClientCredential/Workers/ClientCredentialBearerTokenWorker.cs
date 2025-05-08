@@ -28,7 +28,7 @@ namespace WorkerService.Workers
             _clientConfigurations = clientConfigurations.Value;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             /************************************************************************************************
             * Manually getting token and set authorization header on the API request. 
@@ -93,18 +93,18 @@ namespace WorkerService.Workers
                 throw new Exception("User should not have access");
             _logger.LogInformation("Access denied response: " + meResponse.StatusCode);
 
-            await RunService(stoppingToken);
+            await RunService(cancellationToken);
         }
 
-        private async Task RunService(CancellationToken stoppingToken)
+        private async Task RunService(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 if (_logger.IsEnabled(LogLevel.Information))
                 {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 }
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(1000, cancellationToken);
             }
         }
     }

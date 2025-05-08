@@ -9,8 +9,10 @@ namespace Fhi.Authentication.OpenIdConnect
     /// <summary>
     /// Extensions for handling cookie events in OpenID Connect authentication.
     /// </summary>
-    public static class CookieEventExtensions
+    public static partial class CookieEventExtensions
     {
+        private const string ExpiresAt = "expires_at";
+
         /// <summary>
         /// This override is required when using downstream APIs that rely on access tokens.
         /// 
@@ -26,7 +28,7 @@ namespace Fhi.Authentication.OpenIdConnect
         /// </summary>
         /// <param name="context">The context for validating the authentication principal.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public static async Task<TokenValidateResponse> ValidateTokenExpirationAsync(this CookieValidatePrincipalContext context)
+        public static async Task<TokenValidationResponse> ValidateTokenExpirationAsync(this CookieValidatePrincipalContext context)
         {
             if (context.Principal?.Identity is not null && context.Principal.Identity.IsAuthenticated)
             {
@@ -36,30 +38,22 @@ namespace Fhi.Authentication.OpenIdConnect
 
                 if (accessToken == null || string.IsNullOrEmpty(accessToken.Value) || refreshToken == null || string.IsNullOrEmpty(refreshToken.Value))
                 {
-                    return new TokenValidateResponse(true, "NotFound", "Access token or refresh token is missing. Rejecting principal and renewing cookie.");
+                    return new TokenValidationResponse(true, TokenValidationErrorCodes.NotFound, "Access token or refresh token is missing. Rejecting principal and renewing cookie.");
                 }
 
-                var expiresAt = DateTimeOffset.Parse(tokens.SingleOrDefault(t => t.Name == "expires_at")?.Value ?? string.Empty, CultureInfo.InvariantCulture);
+                var expiresAt = DateTimeOffset.Parse(tokens.SingleOrDefault(t => t.Name == ExpiresAt)?.Value ?? string.Empty, CultureInfo.InvariantCulture);
                 if (expiresAt <= DateTimeOffset.UtcNow)
                 {
                     var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
                     var refreshedTokens = await tokenService.RefreshAccessTokenAsync(refreshToken.Value);
-
                     if (refreshedTokens.IsError)
                     {
-                        return new TokenValidateResponse(true, "ExpiredRefreshToken", "Refresh token is expired. Rejecting principal so that the user can re-authenticate");
+                        return new TokenValidationResponse(true, TokenValidationErrorCodes.ExpiredRefreshToken, "Refresh token is expired. Rejecting principal so that the user can re-authenticate");
                     }
                 }
             }
 
-            return new TokenValidateResponse(false);
+            return new TokenValidationResponse(false);
         }
-        /// <summary>
-        /// Response for token validation.
-        /// </summary>
-        /// <param name="IsError">Values True or False</param>
-        /// <param name="Error">Error type</param>
-        /// <param name="ErrorDescription">Description of error</param>
-        public record TokenValidateResponse(bool IsError, string Error = "", string ErrorDescription = "");
     }
 }

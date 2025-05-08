@@ -1,3 +1,4 @@
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -21,13 +22,8 @@ namespace Fhi.Authentication.OpenIdConnect
             options.TokenValidationParameters ??= new TokenValidationParameters();
             if (string.IsNullOrEmpty(options.TokenValidationParameters.NameClaimType))
             {
-                options.TokenValidationParameters.NameClaimType = "sub";
+                options.TokenValidationParameters.NameClaimType = JwtClaimTypes.Subject;
             }
-            // Only add claim action if not already present
-            //if (!options.ClaimActions.Any(ca => ca.ClaimType == "sub"))
-            //{
-            //    options.ClaimActions.MapJsonKey("sub", "sub");
-            //}
         }
     }
 }

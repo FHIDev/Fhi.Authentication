@@ -24,9 +24,8 @@ builder.Services.AddAuthentication(options =>
 }).AddCookie(options =>
 {
     /*****************************************************************************************
-     * ExpireTimeSpan should be set to a value before refresh token expires. This is to ensure 
-     * that the cookie is not expired when the refresh token is expired used to get a new 
-     * access token in downstream API calls. 
+     * ExpireTimeSpan should be must be set out from access_token and refresh_token lifetime. This is to ensure 
+     * that the cookie is not expired when the refresh token is expired used to get a new access token in downstream API calls. 
      * ***************************************************************************************/
     options.ExpireTimeSpan = TimeSpan.FromSeconds(90);
 })

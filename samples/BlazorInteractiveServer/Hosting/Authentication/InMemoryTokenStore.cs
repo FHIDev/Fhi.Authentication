@@ -1,4 +1,5 @@
 ﻿using Duende.AccessTokenManagement.OpenIdConnect;
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Concurrent;
 using System.Security.Claims;
@@ -19,7 +20,7 @@ public class InMemoryUserTokenStore : IUserTokenStore
 
     public Task StoreTokenAsync(ClaimsPrincipal user, UserToken token, UserTokenRequestParameters? parameters = null)
     {
-        var userId = user.FindFirst("sub")?.Value;
+        var userId = user.FindFirst(JwtClaimTypes.Subject)?.Value;
         if (userId != null)
         {
             _tokenStore[userId] = token;
@@ -30,7 +31,7 @@ public class InMemoryUserTokenStore : IUserTokenStore
     public Task<UserToken> GetTokenAsync(ClaimsPrincipal user, UserTokenRequestParameters? parameters = null)
     {
         var access_token = _contextAccessor.HttpContext?.GetTokenAsync("access_token");
-        var userId = user.FindFirst("sub")?.Value;
+        var userId = user.FindFirst(JwtClaimTypes.Subject)?.Value;
         if (userId != null && _tokenStore.TryGetValue(userId, out var token))
         {
             return Task.FromResult<UserToken>(token);
@@ -40,7 +41,7 @@ public class InMemoryUserTokenStore : IUserTokenStore
 
     public Task ClearTokenAsync(ClaimsPrincipal user, UserTokenRequestParameters? parameters = null)
     {
-        var userId = user.FindFirst("sub")?.Value;
+        var userId = user.FindFirst(JwtClaimTypes.Subject)?.Value;
         if (userId != null)
         {
             _tokenStore.Remove(userId, out _);

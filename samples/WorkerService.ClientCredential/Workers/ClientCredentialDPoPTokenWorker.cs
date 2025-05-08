@@ -107,8 +107,8 @@ namespace WorkerService.Workers
             /************************************************************************************************
             * Sample of using Duende Http Delegation handler to create dpop token 
             * **********************************************************************************************/
-            var healthRecordApiDopClient = _factory.CreateClient(_clientConfiguration.ClientName + ".dpop");
-            var dpopResponse = await healthRecordApiDopClient.GetAsync("api/v1/integration/health-records");
+            var healthRecordApiDPoPClient = _factory.CreateClient(_clientConfiguration.ClientName + ".dpop");
+            var dpopResponse = await healthRecordApiDPoPClient.GetAsync("api/v1/integration/health-records");
             _logger.LogInformation("Dpop weather response: " + await dpopResponse.Content.ReadAsStringAsync());
 
 

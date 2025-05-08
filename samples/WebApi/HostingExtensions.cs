@@ -1,4 +1,5 @@
-﻿using Fhi.Authorization;
+﻿using Duende.IdentityModel;
+using Fhi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using WebApi.Authorization;
 using WebApi.Services;
@@ -52,8 +53,8 @@ namespace WebApi
                 .AddPolicy("EndUserPolicy", policy =>
                 {
                     policy.AuthenticationSchemes.Add("bearer.me");
-                    policy.RequireClaim("sub");
-                    policy.RequireClaim("scope", "fhi:webapi/access");
+                    policy.RequireClaim(JwtClaimTypes.Subject);
+                    policy.RequireClaim(JwtClaimTypes.Scope, "fhi:webapi/access");
                     policy.RequireAuthenticatedUser();
                 })
                  .AddPolicy("Integration", policy =>
