@@ -13,6 +13,7 @@ As a result:
 
 [Blazor state management](https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management?view=aspnetcore-9.0&pivots=server)
 [Blazor Server side authentication](https://learn.microsoft.com/en-us/aspnet/core/blazor/security/?view=aspnetcore-9.0&tabs=visual-studio#server-side-blazor-authentication)
+
 |Scenario | Available in Blazor Server? | Recommendation|
 |-----|------------------|------------------|---------|
 |HttpContext.Request.Cookies | No | Can be used in a API Controller|

@@ -33,7 +33,7 @@ internal static partial class Startup
             * when the refresh token is expired used to get a new access token in downstream API calls. Default is 14 days. 
             * The AddOpenIdConnectCookieEventServices default is 60 minutes.
             * ***************************************************************************************/
-            options.ExpireTimeSpan = TimeSpan.FromSeconds(30);
+            options.ExpireTimeSpan = TimeSpan.FromSeconds(6000);
         })
         .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
         {
