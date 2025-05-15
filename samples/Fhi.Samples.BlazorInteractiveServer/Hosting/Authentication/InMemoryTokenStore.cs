@@ -6,7 +6,7 @@ using System.Security.Claims;
 /// <summary>
 ///Blazor Server keeps a persistent SignalR connection. That connection does not have access to HttpContext or cookies directly.
 /// https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management?view=aspnetcore-9.0&pivots=server.
-/// This stores tokens in memory. For applications that uses multiple instances or not using sticky session user state should use a persistent storage
+/// This stores tokens in memory. For applications that use multiple instances or do not use sticky sessions, user state should be stored in persistent storage
 /// see https://learn.microsoft.com/en-us/aspnet/core/blazor/state-management?view=aspnetcore-9.0&pivots=server#server-side-storage-server
 /// </summary>
 public class InMemoryUserTokenStore : IUserTokenStore
