@@ -32,6 +32,7 @@ internal static partial class Startup
             * ExpireTimeSpan should be set to a value before refresh token expires. This is to ensure that the cookie is not expired 
             * when the refresh token is expired used to get a new access token in downstream API calls. Default is 14 days. 
             * The AddOpenIdConnectCookieEventServices default is 60 minutes.
+            * Note that the ExpireTimeSpan set below is sample. 
             * ***************************************************************************************/
             options.ExpireTimeSpan = TimeSpan.FromSeconds(6000);
         })
