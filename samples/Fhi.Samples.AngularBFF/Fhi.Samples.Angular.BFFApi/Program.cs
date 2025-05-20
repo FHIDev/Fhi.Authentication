@@ -79,7 +79,7 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Clear();
     options.Scope.Add("openid");
     options.Scope.Add("offline_access");
-    options.Scope.Add("fhi:webapi/access");
+    options.Scope.Add("fhi:authextensions.samples/access");
 });
 builder.Services.AddOpenIdConnectCookieOptions();
 builder.Services.AddSingleton<IPostConfigureOptions<OpenIdConnectOptions>, DefaultOpenIdConnectOptions>();
@@ -113,11 +113,9 @@ The code below will require authentication on all incomming requests unless Allo
 attribute is set. Note that minimal API endpoints are not always automatically protected by the policy.
 *************************************************************************************/
 builder.Services.AddAuthorizationBuilder()
-
-        .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
-                .Build());
-
+        .Build());
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -144,9 +142,7 @@ app.UseAuthorization();
  ***********************************************************************************************/
 app.MapGet("/login", [AllowAnonymous] async (HttpContext context) =>
 {
-
-    //TODO: proper return url handling
-    var returnUrl = context.Request.Query["ReturnUrl"].ToString();
+    var returnUrl = context.Request.Query["returnUrl"].ToString();
     if (string.IsNullOrEmpty(returnUrl))
     {
         returnUrl = "/";
@@ -183,7 +179,8 @@ app.MapGet("/logout", async (HttpContext context) =>
 });
 
 app.MapControllers();
-app.MapFallbackToFile("/index.html");
+app.MapFallbackToFile("/index.html")
+    .AllowAnonymous(); // The fallback file (SPA) should be accessible without authentication
 
 app.Run();
 

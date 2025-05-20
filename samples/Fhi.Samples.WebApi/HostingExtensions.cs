@@ -54,7 +54,7 @@ namespace WebApi
                 {
                     policy.AuthenticationSchemes.Add("bearer.me");
                     policy.RequireClaim(JwtClaimTypes.Subject);
-                    policy.RequireClaim(JwtClaimTypes.Scope, "fhi:webapi/access");
+                    policy.RequireClaim(JwtClaimTypes.Scope, "fhi:authextensions.samples/access");
                     policy.RequireAuthenticatedUser();
                 })
                  .AddPolicy("Integration", policy =>

@@ -11,13 +11,12 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          const returnUrl = window.location.search;
-          console.log(returnUrl);
-          window.location.href = "/login?ReturnUrl=" + returnUrl;
+          const returnUrl = window.location.pathname + window.location.search;
+          window.location.href = '/login?returnUrl=' + encodeURIComponent(returnUrl);
         } else {
           //route to error page
         }
-        return throwError(error);
+        return throwError(() => error);
       })
     );
   }
